@@ -62,6 +62,6 @@
     "escape-html": "^1.0.3",
     "intersection-observer": "^0.4.0",
     "jsdom-wc": "^11.0.0-alpha-1",
-    "katex": "^0.8.3"
+    "katex": "^0.10.2"
   }
 }
