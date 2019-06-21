@@ -81,8 +81,8 @@
     In our paper
     <d-cite key="kirsch2019batchbald"></d-cite>
     , we present a new method for choosing batches of informative points in Active Learning which
-    avoids redundancies that happen with other methods. Furthermore, it is based on information theory and expands
-    on useful intuitions. Our implementation is available on GitHub: <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
+    avoids redundancies that plague other methods. Our approach is based on information theory and expands
+    on useful intuitions. We also have made our implementation available on GitHub: <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
   </p>
   <h3>What's Active Learning?</h3>
   <p>
@@ -94,15 +94,15 @@
   <p>
     Often, large unlabelled datasets are available, but they lack labels.
     For example, it is easy to acquire lots of
-    stock photos, but labelling all of them with classes requires human labour which takes a long time and is also
+    stock photos, but labelling all of them takes a lot of time and is also often very
     expensive.
   </p>
   <p>
-    In Active Learning, on the other hand, we only let experts label the most informative data points instead of
-    labelling a large dataset upfront (which comes at a significant expense). These newly labelled data points
+    In Active Learning, on the other hand, we only ask experts to label the most informative data points instead of
+    labelling the whole dataset upfront. The newly labelled data points
     are
-    then added to the training set, and we retrain our model. The process is repeated until a suitable level of
-    accuracy is achieved.
+    then added to the training set, and we retrain our model. This process is repeated until we are happy with the
+    accuracy of our model.
   </p>
   <aside style="grid-row-end:span 5">
     <d-figure>
@@ -115,17 +115,18 @@
     </d-figure>
   </aside>
   <p>
-    Informativeness is measured by so-called
+    We measure informativeness with so-called
     <em>acquisition functions</em>. They are called "acquisition functions"
-    because the score they compute determines which data points to acquire. Usually, the informativeness of
-    unlabelled
-    points is assessed individually.
+    because the score they compute determines which data points to acquire.
   </p>
 
   <h3>The problem is...</h3>
 
   <p>
-    This leads to problems because the most informative points can end up being quite similar to each other.
+    Usually, the informativeness of
+    unlabelled
+    points is assessed individually.
+    However, This leads to problems because the most informative points can end up being quite similar to each other.
   </p>
 
   <d-figure class="l-page">
@@ -133,18 +134,21 @@
     <figcaption>
       <strong>Figure 2:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points on the </em>MNIST<em> dataset
       (hand-written digits).</em>
-      If we were to pick the top 40 points, most of them would be 8s.
+      If we were to pick the top scoring points, most of them would be 8s, even though we can assume that after the first
+      couple of them our model would consider them less informative than other available data.
       The points are color-coded by digit label and sorted by score.
       Points are slightly shifted on the x-axis by digit label to avoid overlaps.
       The model used for scoring had been trained to 90% accuracy already.
     </figcaption>
   </d-figure>
 
+  <h3>Our contribution</h3>
   <p>
     In our work, we expand the notion of acquisition function to batches of data points, and develop a new
     acquisition function that takes into account similarities between data points. For this, we take the
     commonly-used
-    <strong>BALD</strong> acquisition function and extend it to <strong>BatchBALD</strong>.
+    <strong>BALD</strong> acquisition function and extend it to <strong>BatchBALD</strong> in a grounded way,
+    which we will explain below.
   </p>
 
   <p>
@@ -198,13 +202,24 @@
     first.
   </p>
 
-  <h3>BALD (Bayesian Active Learning by Disagreement)</h3>
+  <h3>What's BALD?</h3>
+
+  <p>BALD stands for: Bayesian Active Learning by Disagreement.</p>
+  <p>
+    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which helps us capture uncertainties
+    in the predictions of our model. In a Bayesian model, the parameters are not just numbers that get updated
+    during training but probability distributions.
+  </p>
+
+  <p>
+    This allows the model to quantify its beliefs: a wide distributions for a parameter means that the model is
+    uncertain about its true value, whereas a narrow one quantifies high certainty.
+  </p>
 
   <p>
     BALD scores a data point $x$ based on how well the model's
     predictions $y$ inform us about the model parameters
-    <d-math>\boldsymbol{\omega}</d-math>
-    , which is captured by the mutual information $ \mathbb{I}(y, \boldsymbol{\omega}) $ between the two.
+    <d-math>\boldsymbol{\omega}</d-math>. For this, it computes the mutual information $ \mathbb{I}(y, \boldsymbol{\omega}) $.
     Mutual information is well-known in information theory and captures the information overlap between quantities.
   </p>
 
@@ -219,21 +234,7 @@
   </aside>
 
   <p>
-    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which helps us capture uncertainties
-    in the predictions of our model. In a Bayesian model, the parameters are not just numbers that get updated
-    during training but probability distributions.
-  </p>
-
-  <p>
-    This allows the model to quantify its beliefs: a wide distributions for a parameter means that the model is
-    uncertain about its true value, whereas a narrow one quantifies high certainty.
-  </p>
-
-  <h3>BatchBALD</h3>
-
-  <p>
     The BALD acquisition function for a batch of $b$ points can be expressed as:
-
     <d-math block>
       a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
       \mathcal{D}_{\mathrm{train}}\right)\right)
@@ -259,7 +260,7 @@
       \end{aligned}
     </d-math>
 
-    Figure \@ref(fig:bald-intuition) visualizes the scores that BALD computes as area of the intersection of these
+    Figure <a href="#intuition_b">4</a> visualizes the scores that BALD computes as area of the intersection of these
     sets. Because BALD is a simple sum, mututal information between data points is double-counted, and BALD
     overestimates the true mutual information.
   </p>
@@ -267,15 +268,19 @@
     <d-figure id="intuition_bb">
       <img src="assets/intuition_bb.svg" alt="" style="max-width: 15em">
       <figcaption>
-        <strong>Figure 6:</strong> <em>Intuition behind BatchBALD.</em>
+        <strong>Figure 5:</strong> <em>Intuition behind BatchBALD.</em>
         BatchBALD takes into account correlations between the data points.
       </figcaption>
     </d-figure>
   </aside>
+
+
+  <h3>BatchBALD</h3>
+
   <p>
     In order to avoid double-counting, we want to compute
     <d-math>\mu^*(\bigcup_i y_i \cap \boldsymbol{\omega})</d-math>
-    , as depicted in figure \@ref(fig:batchbald-intuition), which corresponds to the mutual information
+    , as depicted in figure <a href="#intuition_bb">5</a>, which corresponds to the mutual information
     <d-math>\mathbb{I}(y_1,...,y_b ; \boldsymbol{\omega} | x_1,...,x_b, \mathcal{D}_\mathrm{train})</d-math>
     between the joint of the $y_i$ and
     <d-math>\boldsymbol{\omega}</d-math>
@@ -298,9 +303,9 @@
   </p>
 
   <p>
-    Intuitively, we can see this value as being high when the model has different explanations for the data point
-    that it is confident about individually (yielding a small second term), but that are disagreeing with each other
-    (yielding a high first term), hence the "by Disagreement" in the name.
+    Intuitively, we can see that this value is going to be large when the model has different explanations for the data point
+    that it is confident about individually (yielding a small second term) but the predictions are disagreeing with each other
+    (yielding a large first term), hence the "by Disagreement" in the name.
   </p>
 
   <h3>Submodularity</h3>
@@ -320,13 +325,13 @@
       $$
       for all $A \subseteq \Omega$ and elements $x,y \in \Omega$.
     </div>
-    We can show that our acquisition function fulfills this property.
+    We show in the paper that our acquisition function fulfills this property.
   </div>
 
   <p>
     Nemhauser et al
     <d-cite key="nemhauser1978analysis"></d-cite>
-    have shown that one can then use a greedy algorithm to pick points with a guarantee of having their score is at least
+    have shown that one can then use a greedy algorithm to pick points with a guarantee of that their score is at least
     $1-1/e \approx 63\%$ as good as the optimal one. Such an algorithm is called $1-1/e$-approximate.
   </p>
 
@@ -345,15 +350,15 @@
   <h3>Consistent MC Dropout</h3>
 
   <p>
-    We implement Bayesian neural networks using MC dropout. TK cite yarins paper However, as an important difference to
-    other implementations, we need to use consistent MC dropout: to be able to compute the joint entropies between data
-    points, we need to compute $a_{\mathrm{BatchBALD}}$ using the same sampled model parameters in our BNN for all
-    potential data points in the pool set.
+    We implement Bayesian neural networks using MC dropout <d-cite key="gal2016dropout"></d-cite>.
+    However, as an important difference to
+    other implementations, we require consistent MC dropout: to be able to compute the joint entropies between data
+    points, we need to compute $a_{\mathrm{BatchBALD}}$ using the same sampled model parameters.
   </p>
 
   <p>
     To see why, we have investigated how the scores change with different sets of sampled model parameters being used in
-    MC dropout inference in figure \@ref(fig:banding).
+    MC dropout inference in figure <a href="#banding">6</a>.
   </p>
 
   <p>
@@ -362,10 +367,10 @@
   </p>
 
   <!-- TLDR show banding from variance examination to motivate this important change -->
-  <d-figure class="l-page">
+  <d-figure class="l-page" id="banding">
     <img src="assets/N9_simple_10000_sampled_bb.jpg" alt="">
     <figcaption>
-      <strong>Figure 7:</strong> <em>BatchBALD scores for different sets of 100 sampled model parameters.</em> This shows the BatchBALD
+      <strong>Figure 6:</strong> <em>BatchBALD scores for different sets of 100 sampled model parameters.</em> This shows the BatchBALD
       scores
       for a 1000 randomly picked points out of the pool set while selecting the 10th point in a batch for an MNIST model
       that has already reached 90% accuracy. The scores for a single set of 100 model parameters is shown in blue. The
@@ -384,7 +389,7 @@
   <d-figure>
     <img src="assets/emnist_vis_large.png" alt="" style="max-width: 14em;">
     <figcaption>
-      <strong>Figure 8:</strong> <em>Examples of all 47 classes of EMNIST.</em>
+      <strong>Figure 7:</strong> <em>Examples of all 47 classes of EMNIST.</em>
     </figcaption>
   </d-figure>
 
@@ -395,7 +400,7 @@
   <d-figure>
     <img src="assets/EMNIST_zero_initial_data.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <strong>Figure 9:</strong> <em>Performance on EMNIST.</em> BatchBALD
+      <strong>Figure 8:</strong> <em>Performance on EMNIST.</em> BatchBALD
         consistently outperforms both random acquisition and
         BALD while BALD is unable to beat random acquisition.
     </figcaption>
@@ -403,35 +408,46 @@
 
 
   <p>
-    To understand better, how the acquire data points differ, we have looked at the acquired class labels and compute
-    the entropy of their distribution. The higher the entropy, the more diverse they are.
+    To understand better how the acquire data points differ, we have looked at the acquired class labels and computed
+    the entropy of their distribution. The higher the entropy, the more diverse they are, and indeed it looks good.
   </p>
 
   <d-figure>
     <img src="assets/entropy_labels_EMNIST.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <strong>Figure 10:</strong> <em>Entropy of acquired class labels over acquisition steps on EMNIST.</em>
+      <strong>Figure 9:</strong> <em>Entropy of acquired class labels over acquisition steps on EMNIST.</em>
       BatchBALD steadily acquires a more diverse set of data points.
     </figcaption>
   </d-figure>
 
   <p>
-    Finally, to understand this in more detail, we also looked at the actual distribution at the end of training and
+    Finally, to understand this in more detail, we also looked at the actual distribution of acquired classes
+    at the end and
     found
-    that BALD undersamples some classes, while BatchBALD manages to pick data points from different classes more
+    that BALD undersamples some classes while BatchBALD manages to pick data points from different classes more
     uniformly
     (without knowing the classes, of course).
-    <d-footnote>Random acquisition also picks classes more uniformly than BALD, but not
+    <d-footnote>
+      Random acquisition also picks classes more uniformly than BALD, but not
       as
       well as BatchBALD.
-      TK add picture.
+      <d-figure>
+        <img src="assets/histogram_labels_EMNIST_w_random.png" alt="" style="max-width: 496px;">
+        <caption>
+          <strong>Figure 13:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
+          BatchBALD left, random acquisition center, and BALD right. Classes are sorted by number of acquisitions.
+          Several EMNIST classes are underrepresented in BALD and random acquisition while BatchBALD acquires classes
+          more uniformly.
+          The histograms were created from all acquired points.
+        </caption>
+      </d-figure>
     </d-footnote>
   </p>
 
   <d-figure class="l-page">
     <img src="assets/histogram_labels_EMNIST.png" alt="" style="max-width: 992px;">
     <figcaption>
-      <strong>Figure 11:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
+      <strong>Figure 10:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
       BatchBALD left and BALD right. Classes are sorted by number of acquisitions,
       and only the lower half is shown for clarity. Several EMNIST classes are
       underrepresented in BALD while BatchBALD acquires classes more uniformly.
@@ -440,13 +456,20 @@
   </d-figure>
 
   <p>
-    To see how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST, that
+    To see how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST that
     we
     call <strong>Repeated MNIST</strong>.
-    It simply is MNIST x 3 with some added noise, and shows how BALD falls into a trap where picking the top $b$
+    It simply is MNIST repeated 3 time with some added Gaussian noise, and shows how BALD falls into a trap where picking the top $b$
     individual points is detrimental because there are too many similar points.
     <d-footnote>But BALD is not the only acquisition
-      function to fail in this regime. TK image
+      function to fail in this regime.
+      <d-figure>
+        <img src="assets/RMNIST_others.png" alt="" style="max-width: 496px;">
+        <caption>
+          <strong>Figure 14:</strong> <em>Performance on Repeated MNIST</em>
+          BALD, BatchBALD, Var Ratios, Mean STD and random acquisition: acquisition size 10 with 10 MC dropout samples.
+        </caption>
+      </d-figure>
     </d-footnote>
   </p>
 
@@ -454,7 +477,7 @@
   <d-figure>
     <img src="assets/RMNIST.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <strong>Figure 12:</strong> <em>Performance on Repeated MNIST with acquisition size 10.</em>
+      <strong>Figure 11:</strong> <em>Performance on Repeated MNIST with acquisition size 10.</em>
       BatchBALD outperforms BALD while BALD performs worse than random
       acquisition due to the replications in the dataset.
     </figcaption>
@@ -462,7 +485,7 @@
 
   <p>
     We also played around with different acquisition sizes and found that on MNIST, BatchBALD can even acquire 40 points
-    at a time with little loss of data efficiency, while BALD does not.
+    at a time with little loss of data efficiency while BALD does not.
   </p>
   <d-figure class="l-page">
     <d-figure style="
@@ -477,7 +500,7 @@
       <figcaption><strong>(BatchBALD)</strong></figcaption>
     </d-figure>
     <figcaption>
-      <strong>Figure 13:</strong> <em>Performance on MNIST for increasing acquisition sizes.</em>
+      <strong>Figure 12:</strong> <em>Performance on MNIST for increasing acquisition sizes.</em>
       BALD’s performance drops drastically as
       the acquisition size increases. BatchBALD maintains strong performance even with increasing acquisition size
     </figcaption>
