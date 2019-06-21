@@ -431,19 +431,23 @@
   <d-figure class="l-page">
     <img src="assets/histogram_labels_EMNIST.png" alt="" style="max-width: 992px;">
     <figcaption>
-      <strong>Figure 11:</strong> <em>/em>
+      <strong>Figure 11:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
+      BatchBALD left and BALD right. Classes are sorted by number of acquisitions,
+      and only the lower half is shown for clarity. Several EMNIST classes are
+      underrepresented in BALD while BatchBALD acquires classes more uniformly.
+      The histograms were created from all acquired points.
     </figcaption>
   </d-figure>
 
   <p>
     To see how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST, that
     we
-    called <strong>Repeated MNIST</strong>.
+    call <strong>Repeated MNIST</strong>.
     It simply is MNIST x 3 with some added noise, and shows how BALD falls into a trap where picking the top $b$
     individual points is detrimental because there are too many similar points.
-    <d-footenote>But BALD is not the only acquisition
+    <d-footnote>But BALD is not the only acquisition
       function to fail in this regime. TK image
-    </d-footenote>
+    </d-footnote>
   </p>
 
 
@@ -458,18 +462,24 @@
 
   <p>
     We also played around with different acquisition sizes and found that on MNIST, BatchBALD can even acquire 40 points
-    at a time with little loss of efficiency, while BALD does not.
+    at a time with little loss of data efficiency, while BALD does not.
   </p>
   <d-figure class="l-page">
-    <span style="
+    <d-figure style="
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    width: 100%;
     ">
       <img src="assets/BALD_inc_acq_size.png" alt="" style="max-width: 496px;">
       <img src="assets/BatchBALD_increasing_b.png" alt="" style="max-width: 496px;">
-    </span>
+      <figcaption><strong>(BALD)</strong></figcaption>
+      <figcaption><strong>(BatchBALD)</strong></figcaption>
+    </d-figure>
     <figcaption>
-      TODO
+      <strong>Figure 13:</strong> <em>Performance on MNIST for increasing acquisition sizes.</em>
+      BALD’s performance drops drastically as
+      the acquisition size increases. BatchBALD maintains strong performance even with increasing acquisition size
     </figcaption>
   </d-figure>
 
@@ -477,23 +487,23 @@
 
 
 <d-appendix>
-  <h3>Acknowledgments</h3>
-  <p>
-    We are deeply grateful to...
-  </p>
+<!--  <h3>Acknowledgments</h3>-->
+<!--  <p>-->
+<!--    We are deeply grateful to...-->
+<!--  </p>-->
 
-  <p>
-    Many of our diagrams are based on...
-  </p>
+<!--  <p>-->
+<!--    Many of our diagrams are based on...-->
+<!--  </p>-->
 
-  <h3>Author Contributions</h3>
-  <p>
-    <b>Research:</b> Alex developed ...
-  </p>
+<!--  <h3>Author Contributions</h3>-->
+<!--  <p>-->
+<!--    <b>Research:</b> Alex developed ...-->
+<!--  </p>-->
 
-  <p>
-    <b>Writing & Diagrams:</b> The text was initially drafted by...
-  </p>
+<!--  <p>-->
+<!--    <b>Writing & Diagrams:</b> The text was initially drafted by...-->
+<!--  </p>-->
 
 
   <d-footnote-list></d-footnote-list>
