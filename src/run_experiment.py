@@ -126,8 +126,7 @@ def create_experiment_config_argparser(parser):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="BatchBALD",
-        formatter_class=functools.partial(argparse.ArgumentDefaultsHelpFormatter, width=120),
+        description="BatchBALD", formatter_class=functools.partial(argparse.ArgumentDefaultsHelpFormatter, width=120)
     )
     parser.add_argument("--experiment_task_id", type=str, default=None, help="experiment id")
     parser.add_argument(

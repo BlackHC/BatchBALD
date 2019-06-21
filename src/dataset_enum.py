@@ -123,11 +123,7 @@ class DatasetEnum(enum.Enum):
 
     @property
     def num_classes(self):
-        if self in (
-            DatasetEnum.mnist,
-            DatasetEnum.repeated_mnist_w_noise,
-            DatasetEnum.mnist_w_noise,
-        ):
+        if self in (DatasetEnum.mnist, DatasetEnum.repeated_mnist_w_noise, DatasetEnum.mnist_w_noise):
             return 10
         elif self in (DatasetEnum.emnist, DatasetEnum.emnist_bymerge):
             return 47
@@ -136,11 +132,7 @@ class DatasetEnum(enum.Enum):
 
     def create_bayesian_model(self, device):
         num_classes = self.num_classes
-        if self in (
-            DatasetEnum.mnist,
-            DatasetEnum.repeated_mnist_w_noise,
-            DatasetEnum.mnist_w_noise,
-        ):
+        if self in (DatasetEnum.mnist, DatasetEnum.repeated_mnist_w_noise, DatasetEnum.mnist_w_noise):
             return mnist_model.BayesianNet(num_classes=num_classes).to(device)
         elif self in (DatasetEnum.emnist, DatasetEnum.emnist_bymerge):
             return emnist_model.BayesianNet(num_classes=num_classes).to(device)
@@ -379,9 +371,7 @@ def get_targets(dataset):
     if isinstance(dataset, data.ConcatDataset):
         return torch.cat([get_targets(sub_dataset) for sub_dataset in dataset.datasets])
 
-    if isinstance(
-        dataset, (datasets.MNIST,)
-    ):
+    if isinstance(dataset, (datasets.MNIST,)):
         return dataset.targets
 
     raise NotImplementedError(f"Unknown dataset {dataset}!")
