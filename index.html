@@ -30,7 +30,7 @@
 <body>
 <d-front-matter>
   <script type="text/json">{
-    "title": "BatchBALD",
+    "title": "Deep Active Learning without Wasteful Labelling",
     "description": "Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning",
     "authors": [
       {
@@ -78,31 +78,64 @@
 
 <d-article>
   <p>
+    <b>TLDR</b>: With Active Learning we can make machine learning applicable when labelling costs would be too high otherwise.
     In our paper
     <d-cite key="kirsch2019batchbald"></d-cite>
-    , we present a new method for choosing batches of informative points in Active Learning which
-    avoids redundancies that plague other methods. Our approach is based on information theory and expands
+    , we present a new <i>practical</i> method for choosing batches of informative points in Active Learning which
+    avoids redundancies that plague existing methods. Our approach is based on information theory and expands
     on useful intuitions. We also have made our implementation available on GitHub: <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
   </p>
   <h3>What's Active Learning?</h3>
   <p>
-    <em>Active Learning</em> is a powerful technique to reduce the data hunger in machine learning.
-    Excellent performance can be achieved using state-of-the-art architectures. However, they often need lots of
-    data.
+    Machine learning systems can achieve excellent state-of-the-art performance on many tasks. But these systems  often need lots of data.
     This is particularly a problem in deep learning.
   </p>
   <p>
     Often, large unlabelled datasets are available, but they lack labels.
     For example, it is easy to acquire lots of
     stock photos, but labelling all of them takes a lot of time and is also often very
-    expensive.
+    expensive. This, in turn, excludes many applications from making use of machine learning.
   </p>
   <p>
-    In Active Learning, on the other hand, we only ask experts to label the most informative data points instead of
+    In Active Learning we only ask experts to label the most informative data points, instead of
     labelling the whole dataset upfront. The newly labelled data points
     are
     then added to the training set, and we retrain our model. This process is repeated until we are happy with the
     accuracy of our model.
+  </p>
+  <p>
+    To do Active Learning we need to define some <i>measure informativeness</i>, which is often done in the form of an <em>acquisition function</em>. This measure is called an "acquisition function"
+    because the score it computes determines which data points we want to acquire, and ask an expert to label.
+  </p>
+
+  <h3>The problem is...</h3>
+
+  <p>
+    Usually, the informativeness of unlabelled points is assessed individually, with one popular acquisition function being BALD [<b>cite</b>].
+    However, this can lead to extreme waste because a single informative point can have lots of (near-identical) copies.
+    This means that if we naively acquire the top-K most informative points, we might end up asking an expert to label K identical points!
+  </p>
+
+  <d-figure class="l-page">
+    <img src="assets/1000_BALD_scores_by_digit.jpg" alt="" style="max-width: 992px;">
+    <figcaption>
+      <strong>Figure 2:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points on the </em>MNIST<em> dataset
+      (hand-written digits).</em>
+      If we were to pick the top scoring points (e.g. y value above 0.6), most of them would be 8s (yellow), even though we can assume that after the first
+      couple of them our model would consider them less informative than other available data.
+      The points are color-coded by digit label and sorted by score.
+      Points are slightly shifted on the x-axis by digit label to avoid overlaps.
+      The model used for scoring had been trained to 90% accuracy already.
+    </figcaption>
+  </d-figure>
+
+  <h3>Our contribution</h3>
+  <p>
+    In our work, we efficiently expand the notion of acquisition function to batches (sets) of data points, and develop a new
+    acquisition function that takes into account similarities between data points. For this, we take the
+    commonly-used
+    <strong>BALD</strong> acquisition function and extend it to <strong>BatchBALD</strong> in a grounded way,
+    which we will explain below.
   </p>
   <aside style="grid-row-end:span 5">
     <d-figure>
@@ -114,62 +147,22 @@
       </figcaption>
     </d-figure>
   </aside>
-  <p>
-    We measure informativeness with so-called
-    <em>acquisition functions</em>. They are called "acquisition functions"
-    because the score they compute determines which data points to acquire.
-  </p>
-
-  <h3>The problem is...</h3>
 
   <p>
-    Usually, the informativeness of
-    unlabelled
-    points is assessed individually.
-    However, This leads to problems because the most informative points can end up being quite similar to each other.
-  </p>
-
-  <d-figure class="l-page">
-    <img src="assets/1000_BALD_scores_by_digit.jpg" alt="" style="max-width: 992px;">
-    <figcaption>
-      <strong>Figure 2:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points on the </em>MNIST<em> dataset
-      (hand-written digits).</em>
-      If we were to pick the top scoring points, most of them would be 8s, even though we can assume that after the first
-      couple of them our model would consider them less informative than other available data.
-      The points are color-coded by digit label and sorted by score.
-      Points are slightly shifted on the x-axis by digit label to avoid overlaps.
-      The model used for scoring had been trained to 90% accuracy already.
-    </figcaption>
-  </d-figure>
-
-  <h3>Our contribution</h3>
-  <p>
-    In our work, we expand the notion of acquisition function to batches of data points, and develop a new
-    acquisition function that takes into account similarities between data points. For this, we take the
-    commonly-used
-    <strong>BALD</strong> acquisition function and extend it to <strong>BatchBALD</strong> in a grounded way,
-    which we will explain below.
+    However, knowing how to score batches of points is not sufficient! We still have the challenge of <i>finding</i> the batch with the highest score. The naive solution would be to try all subsets of data points, but that obviously wouldn't work because there are exponentially many possibilities.
   </p>
 
   <p>
-    This, then, leaves us with the challenge of finding the batch with the highest score. The naive solution
-    would
-    be to try all subsets of data points of a certain size, but that doesn't work because there are so many
-    possibilities.
-  </p>
-
-  <p>
-    We found that our acquisition function satisfies as very useful property called "submodularity" which allows
-    us to follow a greedy approach to find a subset that is good enough.
+    For our acquisition function though, we found that it satisfies a very useful property called "submodularity" which allows us to follow a <i>greedy approach</i> to find a subset that is good enough (epsilon-optimal!).
   </p>
 
   <p>
     Overall, this leads our acquisition function BatchBALD to perform better than BALD: it needs fewer iterations
-    and fewer data points to reach high accuracy for similar batch sizes.
+    and fewer data points to reach high accuracy for similar batch sizes, significantly reducing redundant expert labelling hence cost and time.
   </p>
 
   <p>
-    Moreover, it is as good as choosing points individually and retraining the model after every acquisition.
+    Moreover, it is empirically as good as, but much faster than, the optimal choice of individual points sequentially, where we retrain the model after every single point acquisition.
   </p>
 
   <div class="l-page">
@@ -198,15 +191,14 @@
   </div>
 
   <p>
-    Before we explain our acquisition function, however, we need to understand what the BALD acquisition function does
-    first.
+    Before we explain our acquisition function, however, we need to understand what the BALD acquisition function does.
   </p>
 
   <h3>What's BALD?</h3>
 
-  <p>BALD stands for: Bayesian Active Learning by Disagreement.</p>
+  <p>BALD stands for "Bayesian Active Learning by Disagreement" [<b>cite</b>].</p>
   <p>
-    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which helps us capture uncertainties
+    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which allows us capture uncertainties
     in the predictions of our model. In a Bayesian model, the parameters are not just numbers that get updated
     during training but probability distributions.
   </p>
@@ -223,6 +215,19 @@
     Mutual information is well-known in information theory and captures the information overlap between quantities.
   </p>
 
+  <p>
+    The BALD acquisition function for a batch of $b$ points is often expressed as:
+    <d-math block>
+      a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
+      \mathcal{D}_{\mathrm{train}}\right)\right)
+      =\sum_{i=1}^{b} \mathbb{I}\left(y_{i} ; \boldsymbol{\omega} |
+      x_{i}, \mathcal{D}_{\mathrm{train}}\right).
+    </d-math>
+    Intuitively, if we imagine the information content of the predictions given some data points and the model
+    parameters as sets in the batch case, the mutual information can be seen as intersection of these sets, which
+    captures the notion that mutual information measures the information overlap between two random variables.
+  </p>
+
   <aside style="grid-row-end:span 5">
     <d-figure id="intuition_b">
       <img src="assets/intuition.svg" alt="" style="max-width: 15em">
@@ -232,19 +237,6 @@
       </figcaption>
     </d-figure>
   </aside>
-
-  <p>
-    The BALD acquisition function for a batch of $b$ points can be expressed as:
-    <d-math block>
-      a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
-      \mathcal{D}_{\mathrm{train}}\right)\right)
-      =\sum_{i=1}^{b} \mathbb{I}\left(y_{i} ; \boldsymbol{\omega} |
-      x_{i}, \mathcal{D}_{\mathrm{train}}\right)
-    </d-math>
-    Intuitively, if we imagine the information content of the predictions given some data points and the model
-    parameters as sets in the batch case, the mutual information can be seen as intersection of these sets, which
-    captures the notion that mutual information measures the information overlap between two random variables.
-  </p>
 
   <p>
     In fact, Yeung
@@ -261,8 +253,8 @@
     </d-math>
 
     Figure <a href="#intuition_b">4</a> visualizes the scores that BALD computes as area of the intersection of these
-    sets. Because BALD is a simple sum, mututal information between data points is double-counted, and BALD
-    overestimates the true mutual information.
+    sets when acquiring a batch of 3 points. Because BALD is a simple sum, mututal information between data points is double-counted, and BALD
+    overestimates the true mutual information. This is why naively using BALD in a dataset with lots of (near-identical) copies of the same point will lead us to select all the copies: we double count the mutual information intersection between all!
   </p>
   <aside style="grid-row-end:span 5">
     <d-figure id="intuition_bb">
@@ -278,11 +270,11 @@
   <h3>BatchBALD</h3>
 
   <p>
-    In order to avoid double-counting, we want to compute
+    In order to avoid double-counting, we want to compute the quantity
     <d-math>\mu^*(\bigcup_i y_i \cap \boldsymbol{\omega})</d-math>
     , as depicted in figure <a href="#intuition_bb">5</a>, which corresponds to the mutual information
     <d-math>\mathbb{I}(y_1,...,y_b ; \boldsymbol{\omega} | x_1,...,x_b, \mathcal{D}_\mathrm{train})</d-math>
-    between the joint of the $y_i$ and
+    between the <i>joint</i> of the $y_i$ and
     <d-math>\boldsymbol{\omega}</d-math>
     :
     $$
@@ -401,8 +393,8 @@
     <img src="assets/EMNIST_zero_initial_data.png" alt="" style="max-width: 496px;">
     <figcaption>
       <strong>Figure 8:</strong> <em>Performance on EMNIST.</em> BatchBALD
-        consistently outperforms both random acquisition and
-        BALD while BALD is unable to beat random acquisition.
+      consistently outperforms both random acquisition and
+      BALD while BALD is unable to beat random acquisition.
     </figcaption>
   </d-figure>
 
@@ -510,23 +502,23 @@
 
 
 <d-appendix>
-<!--  <h3>Acknowledgments</h3>-->
-<!--  <p>-->
-<!--    We are deeply grateful to...-->
-<!--  </p>-->
+  <!--  <h3>Acknowledgments</h3>-->
+  <!--  <p>-->
+  <!--    We are deeply grateful to...-->
+  <!--  </p>-->
 
-<!--  <p>-->
-<!--    Many of our diagrams are based on...-->
-<!--  </p>-->
+  <!--  <p>-->
+  <!--    Many of our diagrams are based on...-->
+  <!--  </p>-->
 
-<!--  <h3>Author Contributions</h3>-->
-<!--  <p>-->
-<!--    <b>Research:</b> Alex developed ...-->
-<!--  </p>-->
+  <!--  <h3>Author Contributions</h3>-->
+  <!--  <p>-->
+  <!--    <b>Research:</b> Alex developed ...-->
+  <!--  </p>-->
 
-<!--  <p>-->
-<!--    <b>Writing & Diagrams:</b> The text was initially drafted by...-->
-<!--  </p>-->
+  <!--  <p>-->
+  <!--    <b>Writing & Diagrams:</b> The text was initially drafted by...-->
+  <!--  </p>-->
 
 
   <d-footnote-list></d-footnote-list>
