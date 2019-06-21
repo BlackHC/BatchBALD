@@ -5,24 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--    <script src="https://distill.pub/template.v2.js"></script>-->
   <script src="dist/template.v2.js"></script>
+  <style>
+    d-figure > img {
+      display: block;
+      margin: auto;
+      width: 100%
+    }
+
+    d-figure > figcaption {
+      display: block;
+      margin: auto;
+      max-width: max-content;
+    }
+
+    d-figure {
+      padding: 1em 0;
+    }
+
+    aside {
+      grid-row-end: span 5;
+    }
+  </style>
 </head>
-<style>
-  d-figure > img {
-    display: block;
-    margin: auto;
-    width: 100%
-  }
-
-  d-figure {
-    padding: 1em 0;
-  }
-
-  aside {
-    grid-row-end: span 5;
-  }
-</style>
 <body>
-
 <d-front-matter>
   <script type="text/json">{
     "title": "BatchBALD",
@@ -66,14 +71,6 @@
 
 
 
-
-
-
-
-
-
-
-
   </script>
 </d-front-matter>
 
@@ -81,9 +78,11 @@
 
 <d-article>
   <p>
-    In our paper TK, we present a new method for choosing batches of informative points in Active Learning which
+    In our paper
+    <d-cite key="kirsch2019batchbald"></d-cite>
+    , we present a new method for choosing batches of informative points in Active Learning which
     avoids redundancies that happen with other methods. Furthermore, it is based on information theory and expands
-    on useful intuitions. Our implementation is available on GitHub: TK
+    on useful intuitions. Our implementation is available on GitHub: <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
   </p>
   <h3>What's Active Learning?</h3>
   <p>
@@ -93,12 +92,11 @@
     This is particularly a problem in deep learning.
   </p>
   <p>
-    Often, large unlabelled datasets are available, but they lack labels. For example, it is easy to acquire lots of
+    Often, large unlabelled datasets are available, but they lack labels.
+    For example, it is easy to acquire lots of
     stock photos, but labelling all of them with classes requires human labour which takes a long time and is also
     expensive.
   </p>
-
-
   <p>
     In Active Learning, on the other hand, we only let experts label the most informative data points instead of
     labelling a large dataset upfront (which comes at a significant expense). These newly labelled data points
@@ -109,7 +107,7 @@
   <aside style="grid-row-end:span 5">
     <d-figure>
       <img src="assets/acquisition_visualisation.svg" alt="" style="max-width: 25em">
-      <figcaption><em>Figure 1. Idealised acquisitions of </em>BALD<em> and </em>BatchBALD<em>.</em> If a dataset
+      <figcaption><strong>Figure 1:</strong> <em>Idealised acquisitions of </em>BALD<em> and </em>BatchBALD<em>.</em> If a dataset
         were to contain many (near) replicas for each data point, then BALD would select
         all replicas of a single informative data point at the expense of other
         informative data points, wasting data efficiency.
@@ -130,10 +128,17 @@
     This leads to problems because the most informative points can end up being quite similar to each other.
   </p>
 
-  <p>
-    TK add a figure that shows the scores for MNIST color-coded by class. (Ineed to upload the pic from my OATML
-    workstation)
-  </p>
+  <d-figure class="l-page">
+    <img src="assets/1000_BALD_scores_by_digit.jpg" alt="" style="max-width: 992px;">
+    <figcaption>
+      <strong>Figure 2:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points on the </em>MNIST<em> dataset
+      (hand-written digits).</em>
+      If we were to pick the top 40 points, most of them would be 8s.
+      The points are color-coded by digit label and sorted by score.
+      Points are slightly shifted on the x-axis by digit label to avoid overlaps.
+      The model used for scoring had been trained to 90% accuracy already.
+    </figcaption>
+  </d-figure>
 
   <p>
     In our work, we expand the notion of acquisition function to batches of data points, and develop a new
@@ -160,92 +165,113 @@
   </p>
 
   <p>
-    Moreover, it is as good as choosing points invidually and retraining the model after every acquisition.
+    Moreover, it is as good as choosing points individually and retraining the model after every acquisition.
   </p>
 
-  <d-figure class="l-page">
-    <span style="
+  <div class="l-page">
+    <d-figure style="
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     ">
-      <img src="assets/MNIST_BALD_BATCHBALD.png" alt="" width="100%" style="max-width: 496px;">
-      <img src="assets/MNIST_BALD_BATCHBALD_time_perf.png" alt="" width="100%" style="max-width: 496px;">
-    </span>
-    <figcaption>TK TK</figcaption>
-  </d-figure>
+      <img src="assets/MNIST_BALD_BATCHBALD.png" alt="" width="100%" style="max-width: 496px; grid-row: 1;">
+      <figcaption style="grid-row: 2;"><strong>(a)</strong> <em>Performance on MNIST.</em> BatchBALD outperforms BALD
+        with acquisition size 10 and performs
+        close to the optimum of acquisition size 1
+      </figcaption>
+      <img src="assets/MNIST_BALD_BATCHBALD_time_perf.png" alt="" width="100%" style="max-width: 496px; grid-row: 1;">
+      <figcaption style="grid-row: 2;"><strong>(b)</strong> <em>Relative total time on MNIST.</em> Normalized to
+        training BatchBALD with acquisition size 10 to 95% accuracy. The stars mark when 95% accuracy is reached
+        for each method.
+      </figcaption>
+    </d-figure>
+    <figcaption>
+      <strong>Figure 3:</strong> <em>Performance and training duration of BALD and BatchBALD on MNIST.</em>
+      BatchBALD with acquisition size 10 performs no different than BALD with acquisition size 10,
+      but it only requires a fraction of the time because it needs to retrain the model fewer times.
+      Compared to BALD with acquisition size 10, BatchBALD also requires fewer acquisitions to reach 95% accuracy.
+    </figcaption>
+  </div>
 
   <p>
-    To understand our acquisition function, however, we need to explain what the BALD acquisition function does
+    Before we explain our acquisition function, however, we need to understand what the BALD acquisition function does
     first.
   </p>
 
   <h3>BALD (Bayesian Active Learning by Disagreement)</h3>
 
   <p>
-    BALD is based on the concept of mutual information. It scores a data point $x$ based on how well the model's
+    BALD scores a data point $x$ based on how well the model's
     predictions $y$ inform us about the model parameters
     <d-math>\boldsymbol{\omega}</d-math>
-    . Mutual information is well-known in
-    information theory and captures the information overlap between quantities.
+    , which is captured by the mutual information $ \mathbb{I}(y, \boldsymbol{\omega}) $ between the two.
+    Mutual information is well-known in information theory and captures the information overlap between quantities.
   </p>
 
-  <div>
-
-    <p>
-      As the "Bayesian" in the name tell us, this assumes a Bayesian setting which helps us capture uncertainties
-      in the predictions of our model. In a Bayesian model, the parameters are not just numbers that get updated
-      during training but probability distributions.
-    </p>
-
-    <p>
-      This allows the model to quantify its beliefs: a wide distributions for a parameter means that the model is
-      uncertain about its true value, whereas a narrow one quantifies high certainty.
-    </p>
-
-    <h3>BatchBALD</h3>
-
-    <p>
-      The BALD acquisition function for a batch of $b$ points can be expressed as:
-
-      <d-math block>
-        a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
-        \mathcal{D}_{\mathrm{train}}\right)\right)=\sum_{i=1}^{b} \mathbb{I}\left(y_{i} ; \boldsymbol{\omega} |
-        x_{i}, \mathcal{D}_{\mathrm{train}}\right)
-      </d-math>
-      Intuitively, if we imagine the information content of the predictions given some data points and the model
-      parameters as sets in the batch case, the mutual information can be seen as intersection of these sets, which
-      captures the notion that mutual information measures the information overlap between two random variables.
-    </p>
-
-    <p>
-      In fact, Yeung[@yeung1991new] shows that this intuition is well-grounded, and we can define an information
-      measure $\mu^*$ that allows us to express information-theoretic quantities using set operations:
-
-      <d-math block>
-        \begin{aligned}
-        \mathbb{H}(x,y) &= \mu^*(x \cup y) \\
-        \mathbb{I}(x,y) &= \mu^*(x \cap y) \\
-        \mathbb{E}_{p(y)} \mathbb{H}(x | y) &= \mu^*(x \setminus y)
-        \end{aligned}
-      </d-math>
-
-      Figure \@ref(fig:bald-intuition) visualizes the scores that BALD computes as area of the intersection of these
-      sets. Because BALD is a simple sum, mututal information between data points is double-counted, and BALD
-      overestimates the true mutual information.
-    </p>
-
-  </div>
-
-  <aside>
-    <d-figure>
+  <aside style="grid-row-end:span 5">
+    <d-figure id="intuition_b">
       <img src="assets/intuition.svg" alt="" style="max-width: 15em">
       <figcaption>
-        <em>Figure 2. Intuition behind BALD.</em> Areas in grey contribute to the BALD score. Areas in dark grey were
+        <strong>Figure 4:</strong> <em>Intuition behind BALD.</em> Areas in grey contribute to the BALD score. Areas in dark grey were
         double-counted.
       </figcaption>
     </d-figure>
   </aside>
 
+  <p>
+    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which helps us capture uncertainties
+    in the predictions of our model. In a Bayesian model, the parameters are not just numbers that get updated
+    during training but probability distributions.
+  </p>
+
+  <p>
+    This allows the model to quantify its beliefs: a wide distributions for a parameter means that the model is
+    uncertain about its true value, whereas a narrow one quantifies high certainty.
+  </p>
+
+  <h3>BatchBALD</h3>
+
+  <p>
+    The BALD acquisition function for a batch of $b$ points can be expressed as:
+
+    <d-math block>
+      a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
+      \mathcal{D}_{\mathrm{train}}\right)\right)
+      =\sum_{i=1}^{b} \mathbb{I}\left(y_{i} ; \boldsymbol{\omega} |
+      x_{i}, \mathcal{D}_{\mathrm{train}}\right)
+    </d-math>
+    Intuitively, if we imagine the information content of the predictions given some data points and the model
+    parameters as sets in the batch case, the mutual information can be seen as intersection of these sets, which
+    captures the notion that mutual information measures the information overlap between two random variables.
+  </p>
+
+  <p>
+    In fact, Yeung
+    <d-cite key="yeung1991new"></d-cite>
+    shows that this intuition is well-grounded, and we can define an information
+    measure $\mu^*$ that allows us to express information-theoretic quantities using set operations:
+
+    <d-math block>
+      \begin{aligned}
+      \mathbb{H}(x,y) &= \mu^*(x \cup y) \\
+      \mathbb{I}(x,y) &= \mu^*(x \cap y) \\
+      \mathbb{E}_{p(y)} \mathbb{H}(x | y) &= \mu^*(x \setminus y)
+      \end{aligned}
+    </d-math>
+
+    Figure \@ref(fig:bald-intuition) visualizes the scores that BALD computes as area of the intersection of these
+    sets. Because BALD is a simple sum, mututal information between data points is double-counted, and BALD
+    overestimates the true mutual information.
+  </p>
+  <aside style="grid-row-end:span 5">
+    <d-figure id="intuition_bb">
+      <img src="assets/intuition_bb.svg" alt="" style="max-width: 15em">
+      <figcaption>
+        <strong>Figure 6:</strong> <em>Intuition behind BatchBALD.</em>
+        BatchBALD takes into account correlations between the data points.
+      </figcaption>
+    </d-figure>
+  </aside>
   <p>
     In order to avoid double-counting, we want to compute
     <d-math>\mu^*(\bigcup_i y_i \cap \boldsymbol{\omega})</d-math>
@@ -261,26 +287,16 @@
     $$
     We can expand the definition of the mutual information and obtain:
     $$
-    \begin{aligned}
-    & a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{n}\right\}, \mathrm{p}(\boldsymbol{\omega} |
-    \mathcal{D}_{\mathrm{train}})\right) \\
-    = & \mathbb{H}\left(y_{1}, \ldots, y_{n}\right | x_{1}, \ldots, x_{b},
+    a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{n}\right\}, \mathrm{p}(\boldsymbol{\omega} |
+    \mathcal{D}_{\mathrm{train}})\right)
+    = \mathbb{H}\left(y_{1}, \ldots, y_{n}\right | x_{1}, \ldots, x_{b},
     \mathcal{D}_{\mathrm{train}})-\mathbb{E}_{\mathrm{p}(\boldsymbol{\omega} | \mathcal{D}_{\mathrm{train}}
     )}\left[\mathbb{H}\left(y_{1}, \ldots, y_{n} | x_{1}, \ldots, x_{b}, \boldsymbol{\omega}\right)\right]
-    \end{aligned}
     $$
     The first term captures the general uncertainty of the model. The second term captures the expected uncertainty
     for a given draw of the model parameters.
   </p>
-  <aside>
-    <d-figure>
-      <img src="assets/intuition_bb.svg" alt="">
-      <figcaption>
-        <em>Figure 3. Intuition behind BatchBALD.</em>
-        BatchBALD takes into account correlations between the data points.
-      </figcaption>
-    </d-figure>
-  </aside>
+
   <p>
     Intuitively, we can see this value as being high when the model has different explanations for the data point
     that it is confident about individually (yielding a small second term), but that are disagreeing with each other
@@ -292,24 +308,26 @@
     Now to determine which data points to acquire, we are going to use submodularity.
   </p>
 
-  <p>
+  <div style="margin-bottom: 1em;">
     Submodularity says that there are diminishing returns: selecting two points increases the score more than just
     adding either one of them, but less than the separate improvements together:
-  <div style="padding: 1ex 2em;">
-    Given a function $f: \Omega \to \mathbb{R}$, we call $f$ submodular, if:
-    $$
-    f(A \cup \{x, y\}) - f(A) \ge
-    \left ( f(A \cup \{x\}) - f(A) \right ) +
-    \left ( f(A \cup \{y\}) - f(A) \right )
-    $$
-    for all $A \subseteq \Omega$ and elements $x,y \in \Omega$.
+    <div style="padding: 1ex 2em;">
+      Given a function $f: \Omega \to \mathbb{R}$, we call $f$ submodular, if:
+      $$
+      f(A \cup \{x, y\}) - f(A) \ge
+      \left ( f(A \cup \{x\}) - f(A) \right ) +
+      \left ( f(A \cup \{y\}) - f(A) \right )
+      $$
+      for all $A \subseteq \Omega$ and elements $x,y \in \Omega$.
+    </div>
+    We can show that our acquisition function fulfills this property.
   </div>
-  We can show that our acquisition function fulfills this property.
-  </p>
 
   <p>
-    TK author TK citation have shown that one can then use a greedy algorithm to pick the points with a guarantee of
-    1/e$-approximate.
+    Nemhauser et al
+    <d-cite key="nemhauser1978analysis"></d-cite>
+    have shown that one can then use a greedy algorithm to pick points with a guarantee of having their score is at least
+    $1-1/e \approx 63\%$ as good as the optimal one. Such an algorithm is called $1-1/e$-approximate.
   </p>
 
   <p>
@@ -347,7 +365,8 @@
   <d-figure class="l-page">
     <img src="assets/N9_simple_10000_sampled_bb.jpg" alt="">
     <figcaption>
-      <em>BatchBALD scores for different sets of 100 sampled model parameters.</em> This shows the BatchBALD scores
+      <strong>Figure 7:</strong> <em>BatchBALD scores for different sets of 100 sampled model parameters.</em> This shows the BatchBALD
+      scores
       for a 1000 randomly picked points out of the pool set while selecting the 10th point in a batch for an MNIST model
       that has already reached 90% accuracy. The scores for a single set of 100 model parameters is shown in blue. The
       BatchBALD estimates show strong banding with the offsets between different sets of sampled parameters being larger
@@ -365,7 +384,7 @@
   <d-figure>
     <img src="assets/emnist_vis_large.png" alt="" style="max-width: 14em;">
     <figcaption>
-      TODO
+      <strong>Figure 8:</strong> <em>Examples of all 47 classes of EMNIST.</em>
     </figcaption>
   </d-figure>
 
@@ -376,7 +395,9 @@
   <d-figure>
     <img src="assets/EMNIST_zero_initial_data.png" alt="" style="max-width: 496px;">
     <figcaption>
-      TODO
+      <strong>Figure 9:</strong> <em>Performance on EMNIST.</em> BatchBALD
+        consistently outperforms both random acquisition and
+        BALD while BALD is unable to beat random acquisition.
     </figcaption>
   </d-figure>
 
@@ -389,10 +410,10 @@
   <d-figure>
     <img src="assets/entropy_labels_EMNIST.png" alt="" style="max-width: 496px;">
     <figcaption>
-      TODO
+      <strong>Figure 10:</strong> <em>Entropy of acquired class labels over acquisition steps on EMNIST.</em>
+      BatchBALD steadily acquires a more diverse set of data points.
     </figcaption>
   </d-figure>
-
 
   <p>
     Finally, to understand this in more detail, we also looked at the actual distribution at the end of training and
@@ -407,17 +428,17 @@
     </d-footnote>
   </p>
 
-  <d-figure>
+  <d-figure class="l-page">
     <img src="assets/histogram_labels_EMNIST.png" alt="" style="max-width: 992px;">
     <figcaption>
-      TODO
+      <strong>Figure 11:</strong> <em>/em>
     </figcaption>
   </d-figure>
 
   <p>
-    To see, how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST, that
+    To see how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST, that
     we
-    called *Repeated MNIST*.
+    called <strong>Repeated MNIST</strong>.
     It simply is MNIST x 3 with some added noise, and shows how BALD falls into a trap where picking the top $b$
     individual points is detrimental because there are too many similar points.
     <d-footenote>But BALD is not the only acquisition
@@ -429,7 +450,7 @@
   <d-figure>
     <img src="assets/RMNIST.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <em>Performance on Repeated MNIST with acquisition size 10.</em>
+      <strong>Figure 12:</strong> <em>Performance on Repeated MNIST with acquisition size 10.</em>
       BatchBALD outperforms BALD while BALD performs worse than random
       acquisition due to the replications in the dataset.
     </figcaption>
@@ -440,9 +461,12 @@
     at a time with little loss of efficiency, while BALD does not.
   </p>
   <d-figure class="l-page">
-    <span>
-      <img src="assets/BALD_inc_acq_size.png" alt="" width="45%" style="max-width: 496px;">
-      <img src="assets/BatchBALD_increasing_b.png" alt="" width="45%" style="max-width: 496px;">
+    <span style="
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    ">
+      <img src="assets/BALD_inc_acq_size.png" alt="" style="max-width: 496px;">
+      <img src="assets/BatchBALD_increasing_b.png" alt="" style="max-width: 496px;">
     </span>
     <figcaption>
       TODO
@@ -477,6 +501,6 @@
 </d-appendix>
 
 <!-- bibliography will be inlined during Distill pipeline's pre-rendering -->
-<d-bibliography src="bibliography.bib"></d-bibliography>
+<d-bibliography src="references.bib"></d-bibliography>
 
 </body>
