@@ -37,7 +37,7 @@ jspm_packages
 
 # Copied fonts
 examples/fonts
-dist
+#dist
 article-rendered.html
 
 # dependency graph
