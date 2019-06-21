@@ -1,8 +1,7 @@
 # BatchBALD
 
 This is the code drop for our paper 
-[BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning]
-(https://arxiv.org/abs/1906.08158).
+[BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning](https://arxiv.org/abs/1906.08158).
 
 The code comes as is.
 
