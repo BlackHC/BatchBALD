@@ -89,15 +89,15 @@
   <h3>What's Active Learning?</h3>
   <p>
     Using deep learning and a large labelled dataset, we are able to obtain excellent performance on a range
-    of important tasks. Often, we have access to a large unlabelled dataset. For example, it is easy to acquire lots of
+    of important tasks. Often, however, we only have access to a large unlabelled dataset. For example, it is easy to acquire lots of
     stock photos, but labelling these images is time consuming and expensive.
-    This excludes many applications from benefiting of the recent advances in
+    This excludes many applications from benefiting from recent advances in
     deep learning.
   </p>
   <p>
     In Active Learning, we only ask experts to label the most informative data points instead of
     labelling the whole dataset upfront. The model is then retrained using these newly
-    labelled data points and all previously acquired data points. This process is repeated until we are happy with
+    acquired data points and all already labelled data points. This process is repeated until we are happy with
     the accuracy of our model.
   </p>
   <p>
@@ -113,13 +113,13 @@
     with one popular acquisition function being BALD <d-cite key="houlsby2011Bayesian"></d-cite>.
     However, assessing informativeness individually can lead to extreme waste because a single informative point can have lots of (near-identical) copies.
     This means that if we naively acquire the top-K most informative points,
-    we might end up asking an expert to label K near identical points!
+    we might end up asking an expert to label K near-identical points!
   </p>
 
   <d-figure class="l-page">
     <img src="assets/1000_BALD_scores_by_digit.jpg" alt="" style="max-width: 992px;">
     <figcaption>
-      <strong>Figure 1:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points on the </em>MNIST<em> dataset
+      <strong>Figure 1:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points from the </em>MNIST<em> dataset
       (hand-written digits).</em>
       If we were to pick the top scoring points (e.g. y value above 0.6),
       most of them would be 8s (<span style="color: #BCBD22;">&#9608;</span>), even though we can assume that after the first
@@ -164,9 +164,9 @@
   </p>
 
   <p>
-    Overall, this leads to our acquisition function BatchBALD outperforming BALD: it needs fewer iterations
+    Overall, this leads our acquisition function BatchBALD to outperform BALD: it needs fewer iterations
     and fewer data points to reach high accuracy for similar batch sizes,
-    significantly reducing redundant model retraining and expert labelling hence cost and time.
+    significantly reducing redundant model retraining and expert labelling, hence cost and time.
   </p>
 
   <p>
@@ -329,7 +329,7 @@
       $$
       for all $A \subseteq \Omega$ and elements $x,y \in \Omega$.
     </div>
-    We show in Appendix A of the paper that our acquisition function fulfils this property.
+    We show in appendix A of the paper that our acquisition function fulfils this property.
   </div>
 
   <p>
