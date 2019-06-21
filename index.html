@@ -81,29 +81,24 @@
     <b>TLDR</b>: With Active Learning, we can make machine learning applicable when labelling costs would be too high otherwise.
     In our paper
     <d-cite key="kirsch2019batchbald"></d-cite>
-    , we present a new <em>practical</em> method for choosing batches of informative points in Active Learning which
+    , we present BatchBALD: a new <em>practical</em> method for choosing batches of informative points in Active Learning which
     avoids redundancies that plague existing methods. Our approach is based on information theory and expands
-    on useful intuitions. We also have made our implementation available on GitHub:
+    on useful intuitions. We have also made our implementation available on GitHub:
     <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
   </p>
   <h3>What's Active Learning?</h3>
   <p>
-    Machine learning systems can achieve excellent state-of-the-art performance on many tasks.
-    But these systems  often need lots of data.
-    This is particularly a problem in deep learning.
-  </p>
-  <p>
-    Often, large datasets are available, but they lack labels.
-    For example, it is easy to acquire lots of
-    stock photos, but labelling all of them takes a lot of time and is also very
-    expensive. This, in turn, excludes many applications from making use of machine learning.
+    Using deep learning and a large labelled dataset, we are able to obtain excellent performance on a range
+    of important tasks. Often, we have access to a large unlabelled dataset. For example, it is easy to acquire lots of
+    stock photos, but labelling these images is time consuming and expensive.
+    This excludes many applications from benefiting of the recent advances in
+    deep learning.
   </p>
   <p>
     In Active Learning, we only ask experts to label the most informative data points instead of
-    labelling the whole dataset upfront. The newly labelled data points
-    are
-    then added to the training set, and the model is retrained. This process is repeated until we are happy with the
-    accuracy of our model.
+    labelling the whole dataset upfront. The model is then retrained using these newly
+    labelled data points and all previously acquired data points. This process is repeated until we are happy with
+    the accuracy of our model.
   </p>
   <p>
     To perform Active Learning, we need to define some <em>measure of informativeness</em>,
@@ -116,9 +111,9 @@
   <p>
     Usually, the informativeness of unlabelled points is assessed individually,
     with one popular acquisition function being BALD <d-cite key="houlsby2011Bayesian"></d-cite>.
-    However, this can lead to extreme waste because a single informative point can have lots of (near-identical) copies.
+    However, assessing informativeness individually can lead to extreme waste because a single informative point can have lots of (near-identical) copies.
     This means that if we naively acquire the top-K most informative points,
-    we might end up asking an expert to label K identical points!
+    we might end up asking an expert to label K near identical points!
   </p>
 
   <d-figure class="l-page">
@@ -129,9 +124,9 @@
       If we were to pick the top scoring points (e.g. y value above 0.6),
       most of them would be 8s (<span style="color: #BCBD22;">&#9608;</span>), even though we can assume that after the first
       couple of them our model would consider them less informative than other available data.
-      The points are color-coded by digit label and sorted by score.
+      The points are colour-coded by digit label and sorted by score.
       Points are slightly shifted on the x-axis by digit label to avoid overlaps.
-      The model used for scoring had been trained to 90% accuracy already.
+      The model used for scoring has been trained to 90% accuracy first.
     </figcaption>
   </d-figure>
 
@@ -158,19 +153,20 @@
     However, knowing how to score batches of points is not sufficient!
     We still have the challenge of <em>finding</em> the batch with the highest score.
     The naive solution would be to try all subsets of data points,
-    but that obviously wouldn't work because there are exponentially many possibilities.
+    but that wouldn't work because there are exponentially many possibilities.
   </p>
 
   <p>
-    For our acquisition function though,
-    we found that it satisfies a very useful property called "submodularity" which allows us to follow a
-    <em>greedy approach</em> to find a subset that is good enough.
+    For our acquisition function, we found that it satisfies a very useful property called "submodularity" which allows us to follow a
+    <em>greedy approach</em> to find a subset that is good enough. A greedy
+    approach acquires points one by one, and conditions each new point on all
+    points previously added to the batch.
   </p>
 
   <p>
-    Overall, this leads our acquisition function BatchBALD to perform better than BALD: it needs fewer iterations
+    Overall, this leads to our acquisition function BatchBALD outperforming BALD: it needs fewer iterations
     and fewer data points to reach high accuracy for similar batch sizes,
-    significantly reducing redundant expert labelling hence cost and time.
+    significantly reducing redundant model retraining and expert labelling hence cost and time.
   </p>
 
   <p>
@@ -211,8 +207,9 @@
 
   <p>BALD stands for "Bayesian Active Learning by Disagreement" <d-cite key="houlsby2011Bayesian"></d-cite>.</p>
   <p>
-    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which allows us capture uncertainties
-    in the predictions of our model. In a Bayesian model, the parameters are not just numbers that get updated
+    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which
+    allows us to capture uncertainties in the predictions of our model. In a
+    Bayesian model, the parameters are not just numbers (point estimates) that get updated
     during training but probability distributions.
   </p>
 
@@ -267,7 +264,9 @@
 
     Figure <a href="#intuition_b">4</a> visualizes the scores that BALD computes as area of the intersection of these
     sets when acquiring a batch of 3 points. Because BALD is a simple sum, mutual information between data points is double-counted, and BALD
-    overestimates the true mutual information. This is why naively using BALD in a dataset with lots of (near-identical) copies of the same point will lead us to select all the copies: we double count the mutual information intersection between all!
+    overestimates the true mutual information. This is why naively using BALD in
+    a dataset with lots of (near-identical) copies of the same point
+    will lead us to select all the copies: we double count the mutual information intersection between all!
   </p>
   <aside style="grid-row-end:span 5">
     <d-figure id="intuition_bb">
@@ -293,7 +292,7 @@
     $$
     a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
     \mathcal{D}_{\mathrm{train}}\right)\right)=\mathbb{I}\left(y_{1}, \ldots, y_{b} ; \boldsymbol{\omega} | x_{1},
-    \ldots, x_{b}, \mathcal{D}_{\mathrm{train}}\right)
+    \ldots, x_{b}, \mathcal{D}_{\mathrm{train}}\right).
     $$
     Expanding the definition of the mutual information, we obtain the difference between the following two terms:
     $$
@@ -301,7 +300,7 @@
     \mathcal{D}_{\mathrm{train}})\right)
     = \mathbb{H}\left(y_{1}, \ldots, y_{n}\right | x_{1}, \ldots, x_{b},
     \mathcal{D}_{\mathrm{train}})-\mathbb{E}_{\mathrm{p}(\boldsymbol{\omega} | \mathcal{D}_{\mathrm{train}}
-    )}\left[\mathbb{H}\left(y_{1}, \ldots, y_{n} | x_{1}, \ldots, x_{b}, \boldsymbol{\omega}\right)\right]
+    )}\left[\mathbb{H}\left(y_{1}, \ldots, y_{n} | x_{1}, \ldots, x_{b}, \boldsymbol{\omega}\right)\right].
     $$
     The first term captures the general uncertainty of the model. The second term captures the expected uncertainty
     for a given draw of the model parameters.
@@ -326,15 +325,15 @@
       $$
       f(A \cup \{x, y\}) - f(A) \ge
       \left ( f(A \cup \{x\}) - f(A) \right ) +
-      \left ( f(A \cup \{y\}) - f(A) \right )
+      \left ( f(A \cup \{y\}) - f(A) \right ),
       $$
       for all $A \subseteq \Omega$ and elements $x,y \in \Omega$.
     </div>
-    We show in the paper that our acquisition function fulfills this property.
+    We show in Appendix A of the paper that our acquisition function fulfils this property.
   </div>
 
   <p>
-    Nemhauser et al
+    Nemhauser et al.
     <d-cite key="nemhauser1978analysis"></d-cite>
     have shown that one can then use a greedy algorithm to pick points with a guarantee that their score is at least
     $1-1/e \approx 63\%$ as good as the optimal one. Such an algorithm is called $1-1/e$-approximate.
@@ -413,7 +412,7 @@
 
 
   <p>
-    To understand better how the acquire data points differ, we have looked at the acquired class labels and computed
+    To understand better how the acquired data points differ, we can look at the acquired class labels and compute
     the entropy of their distribution. The higher the entropy, the more diverse they are, and indeed it looks good.
   </p>
 
