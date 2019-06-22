@@ -30,7 +30,7 @@
 <body>
 <d-front-matter>
   <script type="text/json">{
-    "title": "Deep Active Learning without Wasteful Labelling",
+    "title": "Human in the Loop: Deep Learning without Wasteful Labelling",
     "description": "Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning",
     "authors": [
       {
@@ -74,18 +74,18 @@
 
 <d-article>
   <p>
-    <b>TLDR</b>: With Active Learning, we can make machine learning applicable when labelling costs would be too high otherwise.
+    <b>TLDR</b>: In <em>Active Learning</em> we use a "human in the loop" approach to data labelling, making machine learning applicable when labelling costs would be too high otherwise.
     In our paper
     <d-cite key="kirsch2019batchbald"></d-cite>
-    , we present BatchBALD: a new <em>practical</em> method for choosing batches of informative points in Active Learning which
-    avoids redundancies that plague existing methods. Our approach is based on information theory and expands
+    we present BatchBALD: a new <em>practical</em> method for choosing batches (sets) of informative points in Deep Active Learning which
+    avoids labelling redundancies that plague existing methods. Our approach is based on information theory and expands
     on useful intuitions. We have also made our implementation available on GitHub:
     <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
   </p>
   <h3>What's Active Learning?</h3>
   <p>
     Using deep learning and a large labelled dataset, we are able to obtain excellent performance on a range
-    of important tasks. Often, however, we only have access to a large unlabelled dataset. For example, it is easy to acquire lots of
+    of important tasks. Often, however, we only have access to a large <em>unlabelled</em> dataset. For example, it is easy to acquire lots of
     stock photos, but labelling these images is time consuming and expensive.
     This excludes many applications from benefiting from recent advances in
     deep learning.
@@ -93,13 +93,17 @@
   <p>
     In Active Learning, we only ask experts to label the most informative data points instead of
     labelling the whole dataset upfront. The model is then retrained using these newly
-    acquired data points and all already labelled data points. This process is repeated until we are happy with
+    acquired data points and all previously labelled data points. This process is repeated until we are happy with
     the accuracy of our model.
   </p>
   <p>
     To perform Active Learning, we need to define some <em>measure of informativeness</em>,
-    which is often done in the form of an <em>acquisition function</em>. This measure is called an "acquisition function"
-    because the score it computes determines which data points we want to acquire and ask an expert to label.
+    which is often done in the form of an <em>acquisition function</em> $a\left(x; \text{model}\right)$. This measure is called an "acquisition function"
+    because the score it computes determines which data points we want to acquire and ask an expert to label. We then seek to find unlabelled inputs $x$ which maximise the acquisition function:
+    <d-math block>
+      \argmax_{x} a\left(x; \text{model}\right)
+    </d-math>
+    and send these $x$ to an expert, asking for a label $y$.
   </p>
 
   <h3>The problem is...</h3>
@@ -118,7 +122,7 @@
       <strong>Figure 1:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points from the </em>MNIST<em> dataset
       (hand-written digits).</em>
       If we were to pick the top scoring points (e.g. y value above 0.6),
-      most of them would be 8s (<span style="color: #BCBD22;">&#9608;</span>), even though we can assume that after the first
+      most of them would be 8s (<span style="color: #BCBD22;">&#9608;</span>), even though we can assume that after acquiring the first
       couple of them our model would consider them less informative than other available data.
       The points are colour-coded by digit label and sorted by score.
       Points are slightly shifted on the x-axis by digit label to avoid overlaps.
@@ -128,8 +132,8 @@
 
   <h3>Our contribution</h3>
   <p>
-    In our work, we efficiently expand the notion of acquisition function to batches (sets) of data points, and develop a new
-    acquisition function that takes into account similarities between data points. For this, we take the
+    In our work, we efficiently expand the notion of acquisition functions to batches (sets) of data points, and develop a new
+    acquisition function that takes into account similarities between data points when acquiring a batch. For this, we take the
     commonly-used
     <strong>BALD</strong> acquisition function and extend it to <strong>BatchBALD</strong> in a grounded way,
     which we will explain below.
@@ -153,10 +157,9 @@
   </p>
 
   <p>
-    For our acquisition function, we found that it satisfies a very useful property called "submodularity" which allows us to follow a
-    <em>greedy approach</em> to find a subset that is good enough. A greedy
-    approach acquires points one by one, and conditions each new point on all
-    points previously added to the batch.
+    For our acquisition function, we found that it satisfies a very useful property called <em>submodularity</em> which allows us to follow a
+    <em>greedy approach</em>, acquiring points one by one, and conditioning each new point on all
+    points previously added to the batch. Using the submodularity property, we can show that this greedy approach finds a subset that is "good enough" (i.e. $1-1/e$-approximate). 
   </p>
 
   <p>
@@ -203,10 +206,10 @@
 
   <p>BALD stands for "Bayesian Active Learning by Disagreement" <d-cite key="houlsby2011Bayesian"></d-cite>.</p>
   <p>
-    As the "Bayesian" in the name tell us, this assumes a Bayesian setting which
+    As the "Bayesian" in the name tells us, this assumes a Bayesian setting which
     allows us to capture uncertainties in the predictions of our model. In a
     Bayesian model, the parameters are not just numbers (point estimates) that get updated
-    during training but probability distributions.
+    during training, but probability distributions.
   </p>
 
   <p>
@@ -222,7 +225,7 @@
   </p>
 
   <p>
-    The BALD acquisition function for a batch of $b$ points is often expressed as:
+    When using the BALD acquisition to select a <em>batch</em> of $b$ points, we select the top-$b$ points with highest BALD value. This is standard practice in the field, which we will do throughout this post when we refer to BALD. This implies the following batch acquisition function which we try to maximise:
     <d-math block>
       a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
       \mathcal{D}_{\mathrm{train}}\right)\right)
@@ -238,7 +241,7 @@
     <d-figure id="intuition_b">
       <img src="assets/intuition.svg" alt="" style="max-width: 15em">
       <figcaption>
-        <strong>Figure 4:</strong> <em>Intuition behind BALD.</em> Areas in grey contribute to the BALD score. Areas in dark grey were
+        <strong>Figure 4:</strong> <em>Intuition behind BALD.</em> Areas in grey contribute to the BALD score. Areas in dark grey are
         double-counted.
       </figcaption>
     </d-figure>
@@ -315,7 +318,7 @@
 
   <div style="margin-bottom: 1em;">
     Submodularity tells us that there are diminishing returns: selecting two points increases the score more than just
-    adding either one of them, but less than the separate improvements together:
+    adding either one of them individually, but less than the separate improvements together:
     <div style="padding: 1ex 2em;">
       Given a function $f: \Omega \to \mathbb{R}$, we call $f$ submodular, if:
       $$
@@ -331,13 +334,13 @@
   <p>
     Nemhauser et al.
     <d-cite key="nemhauser1978analysis"></d-cite>
-    have shown that one can then use a greedy algorithm to pick points with a guarantee that their score is at least
+    have shown that for submodular functions, one can use a greedy algorithm to pick points with a guarantee that their score is at least
     $1-1/e \approx 63\%$ as good as the optimal one. Such an algorithm is called $1-1/e$-approximate.
   </p>
 
   <p>
     The greedy algorithm starts with an empty batch $A = \{\}$ and computes $a_{\mathrm{BatchBALD}}(A \cup \{x\})$ for
-    all available data points, adds
+    all unlabelled data points, adds
     the highest-scoring $x$ to $A$ and repeats this process until $A$ is of acquisition size.
   </p>
 
@@ -353,7 +356,7 @@
     We implement Bayesian neural networks using MC dropout <d-cite key="gal2016dropout"></d-cite>.
     However, as an important difference to
     other implementations, we require consistent MC dropout: to be able to compute the joint entropies between data
-    points, we need to compute $a_{\mathrm{BatchBALD}}$ using the same sampled model parameters.
+    points, we need to compute $a_{\mathrm{BatchBALD}}$ <em>using the same sampled model parameters</em>.
   </p>
 
   <p>
@@ -362,7 +365,7 @@
   </p>
 
   <p>
-    Without consistent MC dropout, scores would be sampled using different sets of sampled model parameters and would
+    Without consistent MC dropout, scores would be sampled using different sets of sampled model parameters, losing function correlations between the $y_i$'s for near-by $x_i$'s, and would
     essentially be no different than random acquisition given the spread of their scores.
   </p>
 
@@ -374,8 +377,8 @@
       scores
       for a 1000 randomly picked points out of the pool set while selecting the 10th point in a batch for an MNIST model
       that has already reached 90% accuracy. The scores for a single set of 100 model parameters is shown in blue. The
-      BatchBALD estimates show strong banding with the offsets between different sets of sampled parameters being larger
-      than the differences between different data points for a given set.
+      BatchBALD estimates show strong banding with the $y$-offsets between different sets of sampled parameters being larger
+      than the differences between different data points for a given set ($y_\text{max}-y_\text{min}$ within a single band "trajectory").
     </figcaption>
   </d-figure>
 
@@ -394,7 +397,7 @@
   </d-figure>
 
   <p>
-    We are better than BALD which performs even worse than random acquisition.
+    We can show improvement over BALD which performs worse (even compared to random acquisition!) when acquiring large batches:
   </p>
 
   <d-figure>
@@ -408,8 +411,9 @@
 
 
   <p>
-    To understand better how the acquired data points differ, we can look at the acquired class labels and compute
-    the entropy of their distribution. The higher the entropy, the more diverse they are, and indeed it looks good.
+    This is because compared to BatchBALD and random, BALD actively selects redundant points.
+    To understand this better, we can look at the acquired class labels and compute
+    the entropy of their distribution. The higher the entropy, the more diverse the acquired labels are:
   </p>
 
   <d-figure>
@@ -421,9 +425,9 @@
   </d-figure>
 
   <p>
-    Finally, to understand this in more detail, we also looked at the actual distribution of acquired classes
-    at the end and
-    found
+    We can also look at the actual distribution of acquired classes
+    at the end of training, and
+    see
     that BALD undersamples some classes while BatchBALD manages to pick data points from different classes more
     uniformly
     (without knowing the classes, of course).
@@ -459,7 +463,7 @@
     To see how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST that
     we
     call <strong>Repeated MNIST</strong>.
-    It simply is MNIST repeated 3 time with some added Gaussian noise, and shows how BALD falls into a trap where picking the top $b$
+    It is simply MNIST repeated 3 time with some added Gaussian noise, and shows how BALD falls into a trap where picking the top $b$
     individual points is detrimental because there are too many similar points.
     <d-footnote>But BALD is not the only acquisition
       function to fail in this regime.
@@ -485,7 +489,7 @@
 
   <p>
     We also played around with different acquisition sizes and found that on MNIST, BatchBALD can even acquire 40 points
-    at a time with little loss of data efficiency while BALD does not.
+    at a time with little loss of data efficiency while BALD deteriorates quickly.
   </p>
   <d-figure class="l-page">
     <d-figure style="
@@ -505,6 +509,12 @@
       the acquisition size increases. BatchBALD maintains strong performance even with increasing acquisition size
     </figcaption>
   </d-figure>
+
+  <h3>Final thoughts</h3>
+
+  <p>
+    We found it quite surprising that a standard acquisition function, used widely in active learning, performed worse even compared to a random baseline, when evaluated on batches of data. We enjoyed digging into the core of the problem, trying to understand <em>why</em> it failed, which led to some new insights about the way we use information theory tools in the field. In many ways, the true lesson here is that when something fails &mdash; just stop, and think.
+  </p>
 
 </d-article>
 
