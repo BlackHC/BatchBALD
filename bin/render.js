@@ -43,7 +43,7 @@ JSDOM.fromFile(program.inputPath, options).then(dom => {
   data.inputHTMLPath = program.inputPath; // may be needed to resolve relative links!
   data.inputDirectory = path.dirname(program.inputPath);
   transforms.render(document, data);
-  transforms.distillify(document, data);
+  // transforms.distillify(document, data);
 
   const transformedHtml = dom.serialize();
   fs.writeFileSync(program.outputPath, transformedHtml);
