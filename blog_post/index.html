@@ -91,17 +91,18 @@
     deep learning.
   </p>
   <p>
-    In Active Learning, we only ask experts to label the most informative data points instead of
+    In Active Learning we only ask experts to label the most informative data points instead of
     labelling the whole dataset upfront. The model is then retrained using these newly
     acquired data points and all previously labelled data points. This process is repeated until we are happy with
     the accuracy of our model.
   </p>
   <p>
     To perform Active Learning, we need to define some <em>measure of informativeness</em>,
-    which is often done in the form of an <em>acquisition function</em> $a\left(x; \text{model}\right)$. This measure is called an "acquisition function"
-    because the score it computes determines which data points we want to acquire and ask an expert to label. We then seek to find unlabelled inputs $x$ which maximise the acquisition function:
+    which is often done in the form of an <em>acquisition function</em> $a(x; \text{model})$. This measure is called an "acquisition function"
+    because the score it computes determines which data points we want to acquire and ask an expert to label.
+    We then seek to find unlabelled inputs $x$ which maximise the acquisition function:
     <d-math block>
-      \argmax_{x} a\left(x; \text{model}\right)
+      \argmax_{x} a(x; \text{model})
     </d-math>
     and send these $x$ to an expert, asking for a label $y$.
   </p>
@@ -209,7 +210,8 @@
     As the "Bayesian" in the name tells us, this assumes a Bayesian setting which
     allows us to capture uncertainties in the predictions of our model. In a
     Bayesian model, the parameters are not just numbers (point estimates) that get updated
-    during training, but probability distributions.
+    during training but probability distributions.
+<!--    https://www.grammarly.com/blog/comma-before-but/-->
   </p>
 
   <p>
@@ -225,7 +227,10 @@
   </p>
 
   <p>
-    When using the BALD acquisition to select a <em>batch</em> of $b$ points, we select the top-$b$ points with highest BALD value. This is standard practice in the field, which we will do throughout this post when we refer to BALD. This implies the following batch acquisition function which we try to maximise:
+    When using the BALD acquisition to select a <em>batch</em> of $b$ points,
+    we select the top-$b$ points with highest BALD value.
+    This is standard practice in the field, which we will do throughout this post when we refer to BALD.
+    This implies the following batch acquisition function which we try to maximise:
     <d-math block>
       a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
       \mathcal{D}_{\mathrm{train}}\right)\right)
@@ -322,7 +327,7 @@
     <div style="padding: 1ex 2em;">
       Given a function $f: \Omega \to \mathbb{R}$, we call $f$ submodular, if:
       $$
-      f(A \cup \{x, y\}) - f(A) \ge
+      f(A \cup \{x, y\}) - f(A) \le
       \left ( f(A \cup \{x\}) - f(A) \right ) +
       \left ( f(A \cup \{y\}) - f(A) \right ),
       $$
@@ -334,7 +339,7 @@
   <p>
     Nemhauser et al.
     <d-cite key="nemhauser1978analysis"></d-cite>
-    have shown that for submodular functions, one can use a greedy algorithm to pick points with a guarantee that their score is at least
+    have shown that, for submodular functions, one can use a greedy algorithm to pick points with a guarantee that their score is at least
     $1-1/e \approx 63\%$ as good as the optimal one. Such an algorithm is called $1-1/e$-approximate.
   </p>
 
@@ -377,8 +382,8 @@
       scores
       for a 1000 randomly picked points out of the pool set while selecting the 10th point in a batch for an MNIST model
       that has already reached 90% accuracy. The scores for a single set of 100 model parameters is shown in blue. The
-      BatchBALD estimates show strong banding with the $y$-offsets between different sets of sampled parameters being larger
-      than the differences between different data points for a given set ($y_\text{max}-y_\text{min}$ within a single band "trajectory").
+      BatchBALD estimates show strong banding with the score differences between different sets of sampled parameters being larger
+      than the differences between different data points for a given set within a single band "trajectory").
     </figcaption>
   </d-figure>
 
@@ -513,7 +518,11 @@
   <h3>Final thoughts</h3>
 
   <p>
-    We found it quite surprising that a standard acquisition function, used widely in active learning, performed worse even compared to a random baseline, when evaluated on batches of data. We enjoyed digging into the core of the problem, trying to understand <em>why</em> it failed, which led to some new insights about the way we use information theory tools in the field. In many ways, the true lesson here is that when something fails &mdash; just stop, and think.
+    We found it quite surprising that a standard acquisition function, used widely in active learning,
+    performed worse even compared to a random baseline, when evaluated on batches of data.
+    We enjoyed digging into the core of the problem, trying to understand <em>why</em> it failed,
+    which led to some new insights about the way we use information theory tools in the field.
+    In many ways, the true lesson here is that when something fails&mdash;pause and think.
   </p>
 
 </d-article>
