@@ -124,7 +124,7 @@
   <d-figure class="l-page">
     <img src="assets/1000_BALD_scores_by_digit.jpg" alt="" style="max-width: 992px;">
     <figcaption>
-      <strong>Figure 1:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points from the </em>MNIST<em> dataset
+      <strong>Figure 2:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points from the </em>MNIST<em> dataset
       (hand-written digits).</em>
       The points are colour-coded by digit label and sorted by score. The model used for scoring has been trained to 90% accuracy first.
       If we were to pick the top scoring points (e.g. scores above 0.6),
@@ -145,7 +145,7 @@
   <aside style="grid-row-end:span 5">
     <d-figure>
       <img src="assets/acquisition_visualisation.svg" alt="" style="max-width: 20em">
-      <figcaption><strong>Figure 2:</strong> <em>Idealised acquisitions of </em>BALD<em> and </em>BatchBALD<em>.</em> If a dataset
+      <figcaption><strong>Figure 3:</strong> <em>Idealised acquisitions of </em>BALD<em> and </em>BatchBALD<em>.</em> If a dataset
         were to contain many (near) replicas for each data point, then BALD would select
         all replicas of a single informative data point at the expense of other
         informative data points, wasting data efficiency.
@@ -195,7 +195,7 @@
       </figcaption>
     </d-figure>
     <figcaption>
-      <strong>Figure 3:</strong> <em>Performance and training duration of BALD and BatchBALD on MNIST.</em>
+      <strong>Figure 4:</strong> <em>Performance and training duration of BALD and BatchBALD on MNIST.</em>
       BatchBALD with acquisition size 10 performs no different than BALD with acquisition size 10,
       but it only requires a fraction of the time because it needs to retrain the model fewer times.
       Compared to BALD with acquisition size 10, BatchBALD also requires fewer acquisitions to reach 95% accuracy.
@@ -248,7 +248,7 @@
     <d-figure id="intuition_b">
       <img src="assets/intuition.svg" alt="" style="max-width: 15em">
       <figcaption>
-        <strong>Figure 4:</strong> <em>Intuition behind BALD.</em> Areas in grey contribute to the BALD score. Areas in dark grey are
+        <strong>Figure 5:</strong> <em>Intuition behind BALD.</em> Areas in grey contribute to the BALD score. Areas in dark grey are
         double-counted.
       </figcaption>
     </d-figure>
@@ -268,7 +268,7 @@
       \end{aligned}
     </d-math>
 
-    Figure <a href="#intuition_b">4</a> visualizes the scores that BALD computes as area of the intersection of these
+    Figure <a href="#intuition_b">5</a> visualizes the scores that BALD computes as area of the intersection of these
     sets when acquiring a batch of 3 points. Because BALD is a simple sum, mutual information between data points is double-counted, and BALD
     overestimates the true mutual information. This is why naively using BALD in
     a dataset with lots of (near-identical) copies of the same point
@@ -278,7 +278,7 @@
     <d-figure id="intuition_bb">
       <img src="assets/intuition_bb.svg" alt="" style="max-width: 15em">
       <figcaption>
-        <strong>Figure 5:</strong> <em>Intuition behind BatchBALD.</em>
+        <strong>Figure 6:</strong> <em>Intuition behind BatchBALD.</em>
         BatchBALD takes into account similarities between the data points.
       </figcaption>
     </d-figure>
@@ -290,7 +290,7 @@
   <p>
     In order to avoid double-counting, we want to compute the quantity
     <d-math>\mu^*(\bigcup_i y_i \cap \boldsymbol{\omega})</d-math>
-    , as depicted in figure <a href="#intuition_bb">5</a>, which corresponds to the mutual information
+    , as depicted in figure <a href="#intuition_bb">6</a>, which corresponds to the mutual information
     <d-math>\mathbb{I}(y_1,...,y_b ; \boldsymbol{\omega} | x_1,...,x_b, \mathcal{D}_\mathrm{train})</d-math>
     between the <em>joint</em> of the $y_i$ and
     <d-math>\boldsymbol{\omega}</d-math>
@@ -368,7 +368,7 @@
 
   <p>
     To see why, we have investigated how the scores change with different sets of sampled model parameters being used in
-    MC dropout inference in figure <a href="#banding">6</a>.
+    MC dropout inference in figure <a href="#banding">7</a>.
   </p>
 
   <p>
@@ -380,7 +380,7 @@
   <d-figure class="l-page" id="banding">
     <img src="assets/N9_simple_10000_sampled_bb.jpg" alt="" style="max-width: 1072px;">
     <figcaption>
-      <strong>Figure 6:</strong> <em>BatchBALD scores for different sets of 100 sampled model parameters.</em> This shows the BatchBALD
+      <strong>Figure 7:</strong> <em>BatchBALD scores for different sets of 100 sampled model parameters.</em> This shows the BatchBALD
       scores
       for a 1000 randomly picked points out of the pool set while selecting the 10th point in a batch for an MNIST model
       that has already reached 90% accuracy. The scores for a single set of 100 model parameters is shown in blue. The
@@ -399,7 +399,7 @@
   <d-figure>
     <img src="assets/emnist_vis_large.png" alt="" style="max-width: 14em;">
     <figcaption>
-      <strong>Figure 7:</strong> <em>Examples of all 47 classes of EMNIST.</em>
+      <strong>Figure 8:</strong> <em>Examples of all 47 classes of EMNIST.</em>
     </figcaption>
   </d-figure>
 
@@ -410,7 +410,7 @@
   <d-figure>
     <img src="assets/EMNIST_zero_initial_data.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <strong>Figure 8:</strong> <em>Performance on EMNIST.</em> BatchBALD
+      <strong>Figure 9:</strong> <em>Performance on EMNIST.</em> BatchBALD
       consistently outperforms both random acquisition and
       BALD while BALD is unable to beat random acquisition.
     </figcaption>
@@ -426,7 +426,7 @@
   <d-figure>
     <img src="assets/entropy_labels_EMNIST.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <strong>Figure 9:</strong> <em>Entropy of acquired class labels over acquisition steps on EMNIST.</em>
+      <strong>Figure 10:</strong> <em>Entropy of acquired class labels over acquisition steps on EMNIST.</em>
       BatchBALD steadily acquires a more diverse set of data points.
     </figcaption>
   </d-figure>
@@ -445,7 +445,7 @@
       <d-figure>
         <img src="assets/histogram_labels_EMNIST_w_random.png" alt="" style="max-width: 496px;">
         <caption>
-          <strong>Figure 13:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
+          <strong>Figure 14:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
           BatchBALD left, random acquisition center, and BALD right. Classes are sorted by number of acquisitions.
           Several EMNIST classes are underrepresented in BALD and random acquisition while BatchBALD acquires classes
           more uniformly.
@@ -458,7 +458,7 @@
   <d-figure class="l-page">
     <img src="assets/histogram_labels_EMNIST.png" alt="" style="max-width: 992px;">
     <figcaption>
-      <strong>Figure 10:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
+      <strong>Figure 11:</strong> <em>Histogram of acquired class labels on EMNIST.</em>
       BatchBALD left and BALD right. Classes are sorted by number of acquisitions,
       and only the lower half is shown for clarity. Several EMNIST classes are
       underrepresented in BALD while BatchBALD acquires classes more uniformly.
@@ -477,7 +477,7 @@
       <d-figure>
         <img src="assets/RMNIST_others.png" alt="" style="max-width: 496px;">
         <caption>
-          <strong>Figure 14:</strong> <em>Performance on Repeated MNIST</em>
+          <strong>Figure 15:</strong> <em>Performance on Repeated MNIST.</em>
           BALD, BatchBALD, Var Ratios, Mean STD and random acquisition: acquisition size 10 with 10 MC dropout samples.
         </caption>
       </d-figure>
@@ -488,7 +488,7 @@
   <d-figure>
     <img src="assets/RMNIST.png" alt="" style="max-width: 496px;">
     <figcaption>
-      <strong>Figure 11:</strong> <em>Performance on Repeated MNIST with acquisition size 10.</em>
+      <strong>Figure 12:</strong> <em>Performance on Repeated MNIST with acquisition size 10.</em>
       BatchBALD outperforms BALD while BALD performs worse than random
       acquisition due to the replications in the dataset.
     </figcaption>
@@ -511,9 +511,9 @@
       <figcaption><strong>(BatchBALD)</strong></figcaption>
     </d-figure>
     <figcaption>
-      <strong>Figure 12:</strong> <em>Performance on MNIST for increasing acquisition sizes.</em>
+      <strong>Figure 13:</strong> <em>Performance on MNIST for increasing acquisition sizes.</em>
       BALD’s performance drops drastically as
-      the acquisition size increases. BatchBALD maintains strong performance even with increasing acquisition size
+      the acquisition size increases. BatchBALD maintains strong performance even with increasing acquisition size.
     </figcaption>
   </d-figure>
 
