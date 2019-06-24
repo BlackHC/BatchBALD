@@ -27,7 +27,7 @@ blurb: |
   <a href="https://arxiv.org/abs/1906.08158">[1]</a>
   we present BatchBALD: a new <em>practical</em> method for choosing batches of informative points in Deep Active Learning which
   avoids labelling redundancies that plague existing methods. Our approach is based on information theory and expands
-  on useful intuitions. We have also made our implementation available on GitHub:
+  on useful intuitions. We have also made our implementation available on GitHub at
   <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
 layout: distill-prerendered
 head: |
