@@ -20,7 +20,9 @@ author:
   - ja
   - yg
 blurb: |
-  In <em>Active Learning</em> we use a “human in the loop” approach to data labelling, making machine learning applicable when labelling costs would be too high otherwise.
+  In <em>Active Learning</em> we use a "human in the loop" approach to data labelling,
+  reducing the amount of data that needs to be labelled drastically, and
+  making machine learning applicable when labelling costs would be too high otherwise.
   In our paper
   <a href="https://arxiv.org/abs/1906.08158">[1]</a>
   we present BatchBALD: a new <em>practical</em> method for choosing batches of informative points in Deep Active Learning which

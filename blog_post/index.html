@@ -32,8 +32,8 @@
   <script type="text/json">{
     "title": "Human in the Loop: Deep Learning without Wasteful Labelling",
     "description": "Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning",
-    "previewURL": "assets/teaser.png",
-    "url": "https://http://oatml.cs.ox.ac.uk/blog/2019/06/24/batchbald.html",
+    "previewURL": "http://oatml.cs.ox.ac.uk/blog/2019/06/24/assets/teaser.png",
+    "url": "http://oatml.cs.ox.ac.uk/blog/2019/06/24/batchbald.html",
     "authors": [
       {
         "author": "Andreas Kirsch*",
@@ -77,12 +77,14 @@
 
 <d-article>
   <p>
-    <b>TLDR</b>: In <em>Active Learning</em> we use a "human in the loop" approach to data labelling, making machine learning applicable when labelling costs would be too high otherwise.
+    <b>TLDR</b>: In <em>Active Learning</em> we use a "human in the loop" approach to data labelling,
+    reducing the amount of data that needs to be labelled drastically, and
+    making machine learning applicable when labelling costs would be too high otherwise.
     In our paper
     <d-cite key="kirsch2019batchbald"></d-cite>
     we present BatchBALD: a new <em>practical</em> method for choosing batches of informative points in Deep Active Learning which
     avoids labelling redundancies that plague existing methods. Our approach is based on information theory and expands
-    on useful intuitions. We have also made our implementation available on GitHub:
+    on useful intuitions. We have also made our implementation available on GitHub at
     <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
   </p>
   <h3>What's Active Learning?</h3>
@@ -235,12 +237,18 @@
   <p>
     When using the BALD acquisition function to select a <em>batch</em> of $b$ points,
     we select the top-$b$ points with highest BALD scores, which is standard practice in the field.
-    This is the same as maximising the following batch acquisition function:
+    This is the same as maximising the following batch acquisition function
     <d-math block>
       a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
       \mathcal{D}_{\mathrm{train}}\right)\right)
-      =\sum_{i=1}^{b} \mathbb{I}\left(y_{i} ; \boldsymbol{\omega} |
-      x_{i}, \mathcal{D}_{\mathrm{train}}\right).
+      :=\sum_{i=1}^{b} \mathbb{I}\left(y_{i} ; \boldsymbol{\omega} |
+      x_{i}, \mathcal{D}_{\mathrm{train}}\right)
+    </d-math>
+    with
+    <d-math block>
+      \left\{x_{1}^{*}, \ldots, x_{b}^{*}\right\} :=
+      \underset{\left\{x_{1}, \ldots, x_{b}\right\} \subseteq \mathcal{D}_{\text { pool }}}{\arg \max }
+      a_{\mathrm{BALD}}\left(\left\{\boldsymbol{x}_{1}, \ldots, \boldsymbol{x}_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} | \mathcal{D}_{\text { train }}\right)\right).
     </d-math>
     Intuitively, if we imagine the information content of the predictions given some data points and the model
     parameters as sets in the batch case, the mutual information can be seen as intersection of these sets, which
@@ -298,19 +306,19 @@
     between the <em>joint</em> of the $y_i$ and
     <d-math>\boldsymbol{\omega}</d-math>
     :
-    $$
+    <d-math block>
     a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
-    \mathcal{D}_{\mathrm{train}}\right)\right)=\mathbb{I}\left(y_{1}, \ldots, y_{b} ; \boldsymbol{\omega} | x_{1},
+    \mathcal{D}_{\mathrm{train}}\right)\right) := \mathbb{I}\left(y_{1}, \ldots, y_{b} ; \boldsymbol{\omega} | x_{1},
     \ldots, x_{b}, \mathcal{D}_{\mathrm{train}}\right).
-    $$
+    </d-math>
     Expanding the definition of the mutual information, we obtain the difference between the following two terms:
-    $$
+    <d-math block>
     a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{n}\right\}, \mathrm{p}(\boldsymbol{\omega} |
     \mathcal{D}_{\mathrm{train}})\right)
     = \mathbb{H}\left(y_{1}, \ldots, y_{n}\right | x_{1}, \ldots, x_{b},
     \mathcal{D}_{\mathrm{train}})-\mathbb{E}_{\mathrm{p}(\boldsymbol{\omega} | \mathcal{D}_{\mathrm{train}}
     )}\left[\mathbb{H}\left(y_{1}, \ldots, y_{n} | x_{1}, \ldots, x_{b}, \boldsymbol{\omega}\right)\right].
-    $$
+    </d-math>
     The first term captures the general uncertainty of the model. The second term captures the expected uncertainty
     for a given draw of the model parameters.
   </p>
@@ -328,7 +336,7 @@
 
   <div style="margin-bottom: 1em;">
     Submodularity tells us that there are diminishing returns: selecting two points increases the score more than just
-    adding either one of them individually, but less than the separate improvements together:
+    adding either one of them individually but less than the separate improvements together:
     <div style="padding: 1ex 2em;">
       Given a function $f: \Omega \to \mathbb{R}$, we call $f$ submodular, if:
       $$
