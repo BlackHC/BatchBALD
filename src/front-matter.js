@@ -92,6 +92,15 @@ export function mergeFromYMLFrontmatter(target, source) {
       console.error('Don\'t know what to do with published date: ' + source.publishedDate);
     }
   }
+  if (source.previewURL) {
+    target.previewURL = source.previewURL;
+  }
+  if (source.githubUrl) {
+    target.githubUrl = source.githubUrl;
+  }
+  if (source.url) {
+    target.url = source.url;
+  }
   target.description = source.description;
   target.authors = source.authors.map( (authorObject) => new Author(authorObject));
   target.katex = source.katex;

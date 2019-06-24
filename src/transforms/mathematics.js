@@ -46,7 +46,7 @@ export default function(dom, data) {
   }
 
   if (needsCSS) {
-    const katexCSSTag = '<link rel="stylesheet" href="https://distill.pub/third-party/katex/katex.min.css" crossorigin="anonymous">';
+    const katexCSSTag = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" crossorigin="anonymous">';
     dom.head.insertAdjacentHTML('beforeend', katexCSSTag);
   }
 
