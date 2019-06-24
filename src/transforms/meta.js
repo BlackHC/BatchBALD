@@ -73,7 +73,6 @@ export default function(dom, data) {
     <meta property="og:url" content="${data.url}"/>
     <meta property="og:image" content="${data.previewURL}"/>
     <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="Distill" />
   `);
 
   appendHead(`
@@ -81,10 +80,8 @@ export default function(dom, data) {
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${escape(data.title)}">
     <meta name="twitter:description" content="${escape(data.description)}">
-    <meta name="twitter:url" content="${data.url}">
+    <meta name="twitter:site" content="@OATML_Oxford">
     <meta name="twitter:image" content="${data.previewURL}">
-    <meta name="twitter:image:width" content="560">
-    <meta name="twitter:image:height" content="295">
   `);
 
   // if this is a proprer article, generate Google Scholar meta data
