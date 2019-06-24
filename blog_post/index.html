@@ -77,7 +77,7 @@
     <b>TLDR</b>: In <em>Active Learning</em> we use a "human in the loop" approach to data labelling, making machine learning applicable when labelling costs would be too high otherwise.
     In our paper
     <d-cite key="kirsch2019batchbald"></d-cite>
-    we present BatchBALD: a new <em>practical</em> method for choosing batches (sets) of informative points in Deep Active Learning which
+    we present BatchBALD: a new <em>practical</em> method for choosing batches of informative points in Deep Active Learning which
     avoids labelling redundancies that plague existing methods. Our approach is based on information theory and expands
     on useful intuitions. We have also made our implementation available on GitHub:
     <a href="https://github.com/BlackHC/BatchBALD">https://github.com/BlackHC/BatchBALD</a>.
@@ -96,15 +96,19 @@
     acquired data points and all previously labelled data points. This process is repeated until we are happy with
     the accuracy of our model.
   </p>
+  <aside style="grid-row-end:span 5">
+    <d-figure>
+      <img src="assets/active_learning_loop.svg" alt="" style="max-width: 15em">
+      <figcaption><strong>Figure 1:</strong> <em>Active learning loop.</em> The active learning steps of retraining,
+        scoring, labelling, and acquisition are repeated until the model has sufficient accuracy.
+      </figcaption>
+    </d-figure>
+  </aside>
   <p>
     To perform Active Learning, we need to define some <em>measure of informativeness</em>,
-    which is often done in the form of an <em>acquisition function</em> $a(x; \text{model})$. This measure is called an "acquisition function"
-    because the score it computes determines which data points we want to acquire and ask an expert to label.
-    We then seek to find unlabelled inputs $x$ which maximise the acquisition function:
-    <d-math block>
-      \argmax_{x} a(x; \text{model})
-    </d-math>
-    and send these $x$ to an expert, asking for a label $y$.
+    which is often done in the form of an <em>acquisition function</em>. This measure is called an "acquisition function"
+    because the score it computes determines which data points we want to acquire.
+    We send unlabelled data points which maximise the acquisition function to an expert and ask for labels.
   </p>
 
   <h3>The problem is...</h3>
@@ -122,18 +126,17 @@
     <figcaption>
       <strong>Figure 1:</strong> <em>BALD scores (informativeness) for 1000 randomly-chosen points from the </em>MNIST<em> dataset
       (hand-written digits).</em>
-      If we were to pick the top scoring points (e.g. y value above 0.6),
+      The points are colour-coded by digit label and sorted by score. The model used for scoring has been trained to 90% accuracy first.
+      If we were to pick the top scoring points (e.g. scores above 0.6),
       most of them would be 8s (<span style="color: #BCBD22;">&#9608;</span>), even though we can assume that after acquiring the first
       couple of them our model would consider them less informative than other available data.
-      The points are colour-coded by digit label and sorted by score.
       Points are slightly shifted on the x-axis by digit label to avoid overlaps.
-      The model used for scoring has been trained to 90% accuracy first.
     </figcaption>
   </d-figure>
 
   <h3>Our contribution</h3>
   <p>
-    In our work, we efficiently expand the notion of acquisition functions to batches (sets) of data points, and develop a new
+    In our work, we efficiently expand the notion of acquisition functions to batches (sets) of data points and develop a new
     acquisition function that takes into account similarities between data points when acquiring a batch. For this, we take the
     commonly-used
     <strong>BALD</strong> acquisition function and extend it to <strong>BatchBALD</strong> in a grounded way,
@@ -141,7 +144,7 @@
   </p>
   <aside style="grid-row-end:span 5">
     <d-figure>
-      <img src="assets/acquisition_visualisation.svg" alt="" style="max-width: 25em">
+      <img src="assets/acquisition_visualisation.svg" alt="" style="max-width: 20em">
       <figcaption><strong>Figure 2:</strong> <em>Idealised acquisitions of </em>BALD<em> and </em>BatchBALD<em>.</em> If a dataset
         were to contain many (near) replicas for each data point, then BALD would select
         all replicas of a single informative data point at the expense of other
@@ -159,7 +162,7 @@
 
   <p>
     For our acquisition function, we found that it satisfies a very useful property called <em>submodularity</em> which allows us to follow a
-    <em>greedy approach</em>, acquiring points one by one, and conditioning each new point on all
+    <em>greedy approach</em>: selecting points one by one, and conditioning each new point on all
     points previously added to the batch. Using the submodularity property, we can show that this greedy approach finds a subset that is "good enough" (i.e. $1-1/e$-approximate). 
   </p>
 
@@ -227,10 +230,9 @@
   </p>
 
   <p>
-    When using the BALD acquisition to select a <em>batch</em> of $b$ points,
-    we select the top-$b$ points with highest BALD value.
-    This is standard practice in the field, which we will do throughout this post when we refer to BALD.
-    This implies the following batch acquisition function which we try to maximise:
+    When using the BALD acquisition function to select a <em>batch</em> of $b$ points,
+    we select the top-$b$ points with highest BALD scores, which is standard practice in the field.
+    This is the same as maximising the following batch acquisition function:
     <d-math block>
       a_{\mathrm{BALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}\left(\boldsymbol{\omega} |
       \mathcal{D}_{\mathrm{train}}\right)\right)
@@ -468,7 +470,7 @@
     To see how much better BatchBALD copes with pathological cases, we also experimented with a version of MNIST that
     we
     call <strong>Repeated MNIST</strong>.
-    It is simply MNIST repeated 3 time with some added Gaussian noise, and shows how BALD falls into a trap where picking the top $b$
+    It is simply MNIST repeated 3 time with some added Gaussian noise and shows how BALD falls into a trap where picking the top $b$
     individual points is detrimental because there are too many similar points.
     <d-footnote>But BALD is not the only acquisition
       function to fail in this regime.
