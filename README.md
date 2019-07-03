@@ -30,7 +30,7 @@ pip install -r requirements.txt
 and you can start an experiment using:
 
 ```
-python src/run_experiment --quickquick --num_inference_samples 10 --available_sample_k 40
+python src/run_experiment.py --quickquick --num_inference_samples 10 --available_sample_k 40
 ```
 
 which starts an experiment on a subset of MNIST with 10 MC dropout samples and acquisition size 40.
