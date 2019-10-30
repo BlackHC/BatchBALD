@@ -73,7 +73,44 @@
 </d-front-matter>
 
 <d-title></d-title>
-<d-byline></d-byline>
+<d-byline>
+  <div class="byline grid">
+    <div class="authors-affiliations grid">
+      <h3>Authors</h3>
+      <h3>Affiliations</h3>
+
+      <p class="author">
+        <a class="name" href="https://blackhc.net/">Andreas Kirsch*</a><br>
+        <a class="name" href="https://joo.st/">Joost van Amersfoort*</a><br>
+        <a class="name" href="http://www.cs.ox.ac.uk/people/yarin.gal/website/">Yarin Gal</a></p>
+      <a class="affiliation" href="https://oatml.cs.ox.ac.uk">OATML, Department of Computer Science, University of Oxford</a><p class="affiliation">
+
+    </p>
+
+      <p class="author">
+
+
+      </p>
+      <p class="affiliation">
+
+      </p>
+
+      <p class="author">
+
+
+      </p>
+      <p class="affiliation">
+
+      </p>
+
+    </div>
+    <div>
+      <h3>Published</h3>
+
+      <p><em>NeurIPS 2019</em></p>
+    </div>
+  </div>
+</d-byline>
 
 <d-article>
   <p>
@@ -168,7 +205,7 @@
   <p>
     For our acquisition function, we found that it satisfies a very useful property called <em>submodularity</em> which allows us to follow a
     <em>greedy approach</em>: selecting points one by one, and conditioning each new point on all
-    points previously added to the batch. Using the submodularity property, we can show that this greedy approach finds a subset that is "good enough" (i.e. $1-1/e$-approximate). 
+    points previously added to the batch. Using the submodularity property, we can show that this greedy approach finds a subset that is "good enough" (i.e. $1-1/e$-approximate).
   </p>
 
   <p>
@@ -201,7 +238,7 @@
     </d-figure>
     <figcaption>
       <strong>Figure 4:</strong> <em>Performance and training duration of BALD and BatchBALD on MNIST.</em>
-      BatchBALD with acquisition size 10 performs no different than BALD with acquisition size 10,
+      BatchBALD with acquisition size 10 performs no different than BALD with acquisition size 1,
       but it only requires a fraction of the time because it needs to retrain the model fewer times.
       Compared to BALD with acquisition size 10, BatchBALD also requires fewer acquisitions to reach 95% accuracy.
     </figcaption>
@@ -313,11 +350,11 @@
     </d-math>
     Expanding the definition of the mutual information, we obtain the difference between the following two terms:
     <d-math block>
-    a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{n}\right\}, \mathrm{p}(\boldsymbol{\omega} |
+    a_{\mathrm{BatchBALD}}\left(\left\{x_{1}, \ldots, x_{b}\right\}, \mathrm{p}(\boldsymbol{\omega} |
     \mathcal{D}_{\mathrm{train}})\right)
-    = \mathbb{H}\left(y_{1}, \ldots, y_{n}\right | x_{1}, \ldots, x_{b},
+    = \mathbb{H}\left(y_{1}, \ldots, y_{b}\right | x_{1}, \ldots, x_{b},
     \mathcal{D}_{\mathrm{train}})-\mathbb{E}_{\mathrm{p}(\boldsymbol{\omega} | \mathcal{D}_{\mathrm{train}}
-    )}\left[\mathbb{H}\left(y_{1}, \ldots, y_{n} | x_{1}, \ldots, x_{b}, \boldsymbol{\omega}\right)\right].
+    )}\left[\mathbb{H}\left(y_{1}, \ldots, y_{b} | x_{1}, \ldots, x_{b}, \boldsymbol{\omega}\right)\right].
     </d-math>
     The first term captures the general uncertainty of the model. The second term captures the expected uncertainty
     for a given draw of the model parameters.

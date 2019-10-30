@@ -54,7 +54,7 @@ export class Byline extends HTMLElement {
   static get is() { return 'd-byline'; }
 
   set frontMatter(frontMatter) {
-    this.innerHTML = bylineTemplate(frontMatter);
+    //this.innerHTML = bylineTemplate(frontMatter);
   }
 
 }
