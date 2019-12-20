@@ -14,9 +14,9 @@
    inkscape:version="0.92.4 (unknown)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 142.28895 103.85143"
-   height="103.85143mm"
-   width="142.28894mm">
+   viewBox="0 0 114.19369 93.835801"
+   height="93.835808mm"
+   width="114.19368mm">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -27,8 +27,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="88.145719"
-     inkscape:cy="296.43278"
+     inkscape:cx="-165.94657"
+     inkscape:cy="277.53512"
      inkscape:document-units="mm"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -52,10 +52,10 @@
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:snap-bbox-midpoints="true"
-     fit-margin-top="15"
-     fit-margin-left="25"
-     fit-margin-right="25"
-     fit-margin-bottom="5" />
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -72,7 +72,7 @@
      inkscape:label="Desc"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-31.411994,-81.407251)">
+     transform="translate(-56.411994,-86.422874)">
     <flowRoot
        xml:space="preserve"
        id="flowRoot4829"
@@ -280,13 +280,13 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Shades"
-     transform="translate(-31.411994,-81.407251)" />
+     transform="translate(-56.411994,-86.422874)" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Outlines"
      style="display:inline"
-     transform="translate(-31.411994,-81.407251)">
+     transform="translate(-56.411994,-86.422874)">
     <path
        style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:1.58088875;stroke-miterlimit:4;stroke-dasharray:none"
        d="m 100.02792,129.49845 c 0.55111,-3.63019 1.80183,-6.71092 3.4775,-8.56569 l 0.96336,-1.06632 1.51753,1.55568 c 2.58172,2.64663 5.01998,3.33719 9.40774,2.66447 l 2.31053,-0.35424 0.17437,1.54123 c 0.29748,2.62938 1.6101,3.72256 5.23508,4.35989 2.96194,0.52076 3.19934,0.684 3.19934,2.19988 0,1.17417 -0.0947,1.3391 -1.62113,2.82352 -1.3171,1.28083 -1.73063,1.54085 -2.20498,1.38644 -0.32111,-0.10453 -1.84669,-0.24874 -3.39017,-0.32046 -2.26738,-0.10536 -3.26828,-0.0207 -5.21175,0.44094 -3.50763,0.83315 -6.43799,2.33486 -8.09589,4.14887 l -1.35166,1.47893 -1.0864,-1.2689 c -2.6621,-3.10931 -3.90112,-7.21925 -3.32347,-11.02424 z"
