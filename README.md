@@ -5,6 +5,10 @@ This is the code drop for our paper
 
 The code comes as is.
 
+See https://github.com/BlackHC/batchbald_redux and https://blackhc.github.io/batchbald_redux/ for a reimplementation.
+
+ElementAI's Baal framework also supports BatchBALD: https://github.com/ElementAI/baal/. 
+
 Please cite us:
 
 ```
