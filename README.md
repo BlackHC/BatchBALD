@@ -1,5 +1,9 @@
 # BatchBALD
 
+**Note:** A more modular re-implementation can be found at https://github.com/BlackHC/batchbald_redux.
+
+---
+
 This is the code drop for our paper 
 [BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning](https://arxiv.org/abs/1906.08158).
 
