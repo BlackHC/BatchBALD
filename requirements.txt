@@ -1,5 +1,5 @@
 pytorch_ignite==0.1.1
-pytest==3.10.0
+pytest==9.0.3
 torch~=1.1
 blackhc.laaos~=0.1
 blackhc.notebook
